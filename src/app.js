@@ -21,7 +21,7 @@ bot.onText(/\/findPrice (.+)/, async function (msg, match) {
     bot.sendMessage(chatId, resp, { disable_web_page_preview: true })
 })
 
-bot.on('message', (msg) => {
+/*bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Hatsuki has received your message');
-});
+});*/
