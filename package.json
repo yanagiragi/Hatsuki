@@ -1,0 +1,24 @@
+{
+  "name": "Hatsuki",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.30.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanagiragi/Hatsuki.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yanagiragi/Hatsuki/issues"
+  },
+  "homepage": "https://github.com/yanagiragi/Hatsuki#readme"
+}
