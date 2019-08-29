@@ -18,7 +18,13 @@ bot.onText(/\/findPrice (.+)/, async function (msg, match) {
     console.log(`Searching ${title}`)
     const resp = await FindPrice(title)
     console.log(`Done Searching ${title}, result = ${resp}`)
-    bot.sendMessage(chatId, resp, { disable_web_page_preview: true })
+    if (resp.length === 0) {
+        bot.sendMessage(chatId, `Query: [${title}] Not Found ...`, { disable_web_page_preview: true })
+        bot.sendPhoto(chatId, 'https://i.imgur.com/cOccc5J.jpg')
+    }
+    else {
+        bot.sendMessage(chatId, resp, { disable_web_page_preview: true })
+    }
 })
 
 /*bot.on('message', (msg) => {
