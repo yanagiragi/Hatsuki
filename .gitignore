@@ -59,4 +59,10 @@ typings/
 
 # next.js build output
 .next
+
 token.txt
+id.json
+
+src/Plugins/Subscriptions/data.json
+src/Plugins/Subscriptions/container.json
+src/Plugins/Subscriptions/Subscriptions
