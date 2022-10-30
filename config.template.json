@@ -1,0 +1,12 @@
+{
+    // core settings
+    "TelegramToken": "TG_BOT_TOKEN",
+    "Administrator": "TG_USER_ID_IN_NUMBER",
+
+    // Third party settings
+    "Twitter_CsrfToken": "TWITTER_CSRF_TOKEN_FOR_MATURE_CONTENT",
+    "Twitter_AuthToken": "TWITTER_AUTH_TOKEN_FOR_MATURE_CONTENT",
+
+    // bot feature settings
+    "Feature_RepostMatureTweet": false
+}
