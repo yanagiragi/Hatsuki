@@ -80,7 +80,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, ma
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
         for (let index = 0; index < tweet.photos.length; index++) {
             const photo = tweet.photos[index];
-            bot.sendMessage(chatId, `<${tweetShortName}> [${index}]: \n ${photo}`)
+            await bot.sendMessage(chatId, `<${tweetShortName}> [${index}]: \n ${photo}`)
         }
     }
     else {
