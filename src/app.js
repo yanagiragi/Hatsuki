@@ -67,6 +67,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, ma
 
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
         return
     }
 
