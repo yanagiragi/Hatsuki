@@ -2,6 +2,7 @@
     // core settings
     "TelegramToken": "TG_BOT_TOKEN",
     "Administrator": "TG_USER_ID_IN_NUMBER",
+    "isDev": true,
 
     // Third party settings
     "Twitter_CsrfToken": "TWITTER_CSRF_TOKEN_FOR_MATURE_CONTENT",

@@ -6,13 +6,14 @@ const TelegramBot = require('node-telegram-bot-api')
 const ParseTweet = require('./Plugins/ParseTweet/plugin')
 
 const config = JSON.parse(fs.readFileSync(__dirname + '/../config.json'))
+const isDev = config?.isDev ?? true
 
 const bot = new TelegramBot(config.TelegramToken, { polling: true })
 
 bot.onText(/\/start/, function (msg) {
     const chatId = msg.chat.id
 
-    if (chatId !== config.Administrator) {
+    if (isDev && chatId !== config.Administrator) {
         return
     }
     const resp = 'Bello, My Name is Hatsuki'
@@ -65,7 +66,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, ma
     }
 
     const chatId = msg.chat.id
-    if (chatId !== config.Administrator) {
+    if (isDev && chatId !== config.Administrator) {
         return
     }
 
