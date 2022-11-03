@@ -88,3 +88,19 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, ma
         console.log(`Detect ${chatId} post a tweet but content is save. Skip ${tweetShortName}`)
     }
 })
+
+bot.onText(/\/[Ss]hortcut (.*)/, PostImageShortCut)
+bot.onText(/\/sc (.*)/, PostImageShortCut)
+
+async function PostImageShortCut(msg, match) {
+    const chatId = msg.chat.id
+    if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const matchShortCut = config?.imageShortcuts?.filter(x => x.shortcut == match[1])?.[0]
+    if (matchShortCut) {
+        bot.sendMessage(chatId, matchShortCut.link)
+    }
+}
