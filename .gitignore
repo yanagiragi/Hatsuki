@@ -65,3 +65,5 @@ config.json
 src/Plugins/Subscriptions/data.json
 src/Plugins/Subscriptions/container.json
 src/Plugins/Subscriptions/Subscriptions
+
+src/Plugins/ImageShortcut/data.json

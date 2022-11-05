@@ -2,7 +2,7 @@
 
 const { SearchMelonbooks, SearchMandarake, SearchToranoana } = require('./crawler')
 
-async function FindPrice(title) {
+async function FindPrice (title) {
     const mandarakeResults = await SearchMandarake(title)
     const melonbooksResults = await SearchMelonbooks(title)
     const toranoanaResults = await SearchToranoana(title)

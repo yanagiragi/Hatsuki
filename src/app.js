@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const TelegramBot = require('node-telegram-bot-api')
 
 // const FindPrice = require('./Plugins/FindPrice/plugin')
@@ -6,7 +7,8 @@ const TelegramBot = require('node-telegram-bot-api')
 const ParseTweet = require('./Plugins/ParseTweet')
 const ImageShortcut = require('./Plugins/ImageShortcut')
 
-const config = JSON.parse(fs.readFileSync(__dirname + '/../config.json'))
+const configPath = path.join(__dirname, '/../config.json')
+const config = JSON.parse(fs.readFileSync(configPath))
 const isDev = config?.isDev ?? true
 
 const bot = new TelegramBot(config.TelegramToken, { polling: true })
@@ -43,7 +45,7 @@ bot.onText(/\/start/, function (msg) {
 //             bot.sendMessage(accounts.SendMessage, x);
 //         })
 //     }
-// 
+//
 //     result.split('\n\n').map(x => {
 //         bot.sendMessage(accounts.Administrator, x);
 //     })
@@ -54,15 +56,14 @@ bot.onText(/\/start/, function (msg) {
 //     if (chatId !== accounts.Administrator) {
 //         return
 //     }
-// 
+//
 //     await Subscribes()
 // });
 
 // setInterval(Subscribes, 1000 * 60 * 10)
 
 bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
-
-    if (config.Feature_RepostMatureTweet == null || config.Feature_RepostMatureTweet == false) {
+    if (config.Feature_RepostMatureTweet === null || config.Feature_RepostMatureTweet === false) {
         return
     }
 
@@ -72,7 +73,6 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
         return
     }
 
-    const tweetUrl = match[0]
     const tweetAccount = match[1]
     const tweetId = match[2]
     const tweetShortName = `${tweetAccount}/${tweetId}`
@@ -81,7 +81,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     if (tweet.isSensitive) {
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
         for (let index = 0; index < tweet.photos.length; index++) {
-            const photo = tweet.photos[index];
+            const photo = tweet.photos[index]
             await sendMessage(chatId, `<${tweetShortName}> [${index}]: \n ${photo}`)
         }
     }
@@ -98,23 +98,22 @@ bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
     }
 
     const args = match?.[2]?.split(' ')
-    if (!args) 
-    {
+    if (!args) {
         console.log(`Unable to parse ${match}`)
         return
     }
 
-    const isPost = args.length == 1 && args?.[0] != 'list'
+    const isPost = args.length === 1 && args?.[0] !== 'list'
 
     const postOption = {
         mode: 'post',
-        key: args[0], 
+        key: args[0],
         value: null
     }
     const editOption = {
         mode: args[0],
-        key: args[1], 
-        value: args[2] 
+        key: args[1],
+        value: args[2]
     }
 
     const option = isPost ? postOption : editOption
@@ -123,7 +122,7 @@ bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
 
     if (matchShortCut.isOK && matchShortCut.result) {
         const link = matchShortCut.result.link
-        const isSticker = link.substring(link.length - 5, link.length) == '.webp'
+        const isSticker = link.substring(link.length - 5, link.length) === '.webp'
         if (isSticker) {
             sendSticker(chatId, matchShortCut.result.link)
         }
@@ -136,29 +135,29 @@ bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
     }
 })
 
-async function sendMessage(chatId, link)
-{
+async function sendMessage (chatId, link) {
     try {
         bot.sendMessage(chatId, link)
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err)
     }
 }
 
-async function sendPhoto(chatId, link)
-{
+async function sendPhoto (chatId, link) {
     try {
         bot.sendPhoto(chatId, link)
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err)
     }
 }
 
-async function sendSticker(chatId, link)
-{
+async function sendSticker (chatId, link) {
     try {
         bot.sendSticker(chatId, link)
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err)
     }
 }

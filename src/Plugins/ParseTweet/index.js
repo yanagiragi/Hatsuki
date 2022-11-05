@@ -2,7 +2,7 @@
 
 const TwitterCrawler = require('TwitterPictureDownloader').TwitterCrawler
 
-async function ParseTweet(tweetId, csrfToken = '', authToken = '') {
+async function ParseTweet (tweetId, csrfToken = '', authToken = '') {
     const crawler = new TwitterCrawler(null, { csrfToken, authToken })
     return crawler.FetchFromTweet(tweetId)
 }

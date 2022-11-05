@@ -9,7 +9,13 @@
     "node-telegram-bot-api": "^0.30.0",
     "TwitterPictureDownloader": "github:yanagiragi/Twitter-Downloader"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.4.0",
+    "eslint-plugin-promise": "^6.1.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
