@@ -3,7 +3,8 @@ const TelegramBot = require('node-telegram-bot-api')
 
 // const FindPrice = require('./Plugins/FindPrice/plugin')
 // const GetSubscriptions = require('./Plugins/Subscriptions/plugin')
-const ParseTweet = require('./Plugins/ParseTweet/plugin')
+const ParseTweet = require('./Plugins/ParseTweet')
+const ImageShortcut = require('./Plugins/ImageShortcut')
 
 const config = JSON.parse(fs.readFileSync(__dirname + '/../config.json'))
 const isDev = config?.isDev ?? true
@@ -59,7 +60,7 @@ bot.onText(/\/start/, function (msg) {
 
 // setInterval(Subscribes, 1000 * 60 * 10)
 
-bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, match) {
+bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
 
     if (config.Feature_RepostMatureTweet == null || config.Feature_RepostMatureTweet == false) {
         return
@@ -81,7 +82,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, ma
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
         for (let index = 0; index < tweet.photos.length; index++) {
             const photo = tweet.photos[index];
-            await bot.sendMessage(chatId, `<${tweetShortName}> [${index}]: \n ${photo}`)
+            await sendMessage(chatId, `<${tweetShortName}> [${index}]: \n ${photo}`)
         }
     }
     else {
@@ -89,18 +90,69 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async function (msg, ma
     }
 })
 
-bot.onText(/\/[Ss]hortcut (.*)/, PostImageShortCut)
-bot.onText(/\/sc (.*)/, PostImageShortCut)
-
-async function PostImageShortCut(msg, match) {
+bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
         return
     }
 
-    const matchShortCut = config?.imageShortcuts?.filter(x => x.shortcut == match[1])?.[0]
-    if (matchShortCut) {
-        bot.sendMessage(chatId, matchShortCut.link)
+    const args = match?.[2]?.split(' ')
+    if (!args) 
+    {
+        console.log(`Unable to parse ${match}`)
+        return
+    }
+
+    const option = { 
+        isSettingMode: args.length > 1, 
+        arg: { 
+            key: args[0], 
+            value: args[1] 
+        }
+    }
+    
+    const matchShortCut = await ImageShortcut(option)
+    console.log(`Detect ${chatId} request image shortcut with option [${JSON.stringify(option)}], bot responses [${JSON.stringify(matchShortCut)}]`)
+
+    if (matchShortCut.isOK && matchShortCut.result) {
+        const link = matchShortCut.result.link
+        const isSticker = link.substring(link.length - 5, link.length) == '.webp'
+        if (isSticker) {
+            sendSticker(chatId, matchShortCut.result.link)
+        }
+        else {
+            sendPhoto(chatId, matchShortCut.result.link)
+        }
+    }
+    else {
+        sendMessage(chatId, matchShortCut.message)
+    }
+})
+
+async function sendMessage(chatId, link)
+{
+    try {
+        bot.sendMessage(chatId, link)
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function sendPhoto(chatId, link)
+{
+    try {
+        bot.sendPhoto(chatId, link)
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function sendSticker(chatId, link)
+{
+    try {
+        bot.sendSticker(chatId, link)
+    } catch (err) {
+        console.error(err)
     }
 }
