@@ -104,14 +104,20 @@ bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
         return
     }
 
-    const option = { 
-        isSettingMode: args.length > 1, 
-        arg: { 
-            key: args[0], 
-            value: args[1] 
-        }
+    const isPost = args.length == 1
+
+    const postOption = {
+        mode: 'post',
+        key: args[0], 
+        value: null
     }
-    
+    const editOption = {
+        mode: args[0],
+        key: args[1], 
+        value: args[2] 
+    }
+
+    const option = isPost ? postOption : editOption
     const matchShortCut = await ImageShortcut(option)
     console.log(`Detect ${chatId} request image shortcut with option [${JSON.stringify(option)}], bot responses [${JSON.stringify(matchShortCut)}]`)
 

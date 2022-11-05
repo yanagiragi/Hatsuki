@@ -2,36 +2,99 @@ const fs = require('fs')
 
 const dataPath = __dirname + '/data.json'
 
-async function ImageShortcut(option){
-    const data = fs.existsSync(dataPath) 
-        ? JSON.parse(fs.readFileSync(dataPath, 'utf8')) 
-        : []
-    const { isSettingMode, arg } = option
-    const { key, value } = arg
+const data = fs.existsSync(dataPath) 
+    ? JSON.parse(fs.readFileSync(dataPath, 'utf8')) 
+    : []
 
-    if (isSettingMode) {
-        if (data.filter(x => x.shortcut == key).length > 0)
+async function ImageShortcut(option){
+
+    const match = data.filter(x => x.shortcut == option.key)?.[0]
+    
+    if (option.mode == 'post')
+    {
+        if (match)
         {
-            return { isOK: false, message: `Unable to set a exist key [${key}]` }
+            return { 
+                isOK: true, 
+                message: 'success', 
+                result: match
+            }
+        }
+        else {
+            return { 
+                isOK: false, 
+                message: `no shortcut matches the key [${option.key}]` 
+            }
+        }
+    }
+
+    else if (option.mode == 'add')
+    {
+        if (match)
+        {
+            return { 
+                isOK: false, 
+                message: `Unable to set a exist key [${option.key}]` 
+            }
         }
 
         data.push({
-            "shortcut": key,
-            "link": value
+            "shortcut": option.key,
+            "link": option.value
         })
-
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
 
-        return { isOK: true, message: `successfully set the key [${key}]` }
+        return { 
+            isOK: true,
+            message: `successfully set the key [${option.key}]` 
+        }
     }
 
-    const matches = data.filter(x => x.shortcut == key)
-    if (matches.length > 0)
+    else if (option.mode == 'edit')
     {
-        return { isOK: true, message: 'success', result: matches[0] }
+        if (!match)
+        {
+            return { 
+                isOK: false, 
+                message: `Unable to found a exist key [${option.key}] to edit` 
+            }
+        }
+
+        match.link = option.value
+        fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
+
+        return { 
+            isOK: true,
+            message: `successfully edit the key [${option.key}]` 
+        }
+    }
+    
+    else if (option.mode == 'delete' || option.mode == 'remove')
+    {
+        if (!match)
+        {
+            return { 
+                isOK: false, 
+                message: `Unable to found a exist key [${option.key}] to delete` 
+            }
+        }
+
+        const indexToRemove = data.indexOf(match);
+        if (indexToRemove !== -1) {
+            data.splice(indexToRemove, 1);
+        }
+        fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
+
+        return { 
+            isOK: true,
+            message: `successfully remove the key [${option.key}]` 
+        }
     }
 
-    return { isOK: false, message: `no shortcut matches the key [${key}]` }
+    return { 
+        isOK: false, 
+        message: `Unable to detect mode of ${JSON.stringify(option)}` 
+    }
 }
 
 module.exports = ImageShortcut
@@ -39,7 +102,7 @@ module.exports = ImageShortcut
 if (require.main === module) {
     (async () => {
         let isSettingMode = false
-        let arg = { key: 'keqing' }
+        let arg = { mode: 'post', key: 'keqing' }
         let result = await ImageShortcut({ isSettingMode, arg })
         console.log(result)
     })()
