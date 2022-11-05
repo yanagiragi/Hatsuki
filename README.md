@@ -30,9 +30,10 @@ node src/app.js
 
 # or shortcut of `/shortcut post $KEY`
 /sc $KEY
-```
 
-* 目前有三個功能:
+# list all options
+/sc list
+```
 
 1. post: 根據 `$KEY` 貼出對應的圖片
 
@@ -41,3 +42,5 @@ node src/app.js
 1. edit: 將 `$KEY` 對應的圖片複寫為 `$VALUE`
 
 1. remove/delete: 移除 `$KEY` 對應的圖片
+
+1. list: 列出所有的 `$KEY`

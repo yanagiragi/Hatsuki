@@ -91,6 +91,14 @@ async function ImageShortcut(option){
         }
     }
 
+    else if (option.mode == 'list')
+    {
+        return { 
+            isOK: false,
+            message: `Available options are:\n${data.reduce((acc, ele) => `${acc}\n${ele.shortcut}`, '')}`
+        }
+    }
+
     return { 
         isOK: false, 
         message: `Unable to detect mode of ${JSON.stringify(option)}` 

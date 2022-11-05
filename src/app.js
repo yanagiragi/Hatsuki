@@ -104,7 +104,7 @@ bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
         return
     }
 
-    const isPost = args.length == 1
+    const isPost = args.length == 1 && args?.[0] != 'list'
 
     const postOption = {
         mode: 'post',
