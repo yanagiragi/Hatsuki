@@ -19,8 +19,8 @@ bot.onText(/\/start/, function (msg) {
     if (isDev && chatId !== config.Administrator) {
         return
     }
-    const resp = 'Bello, My Name is Hatsuki'
-    bot.sendMessage(chatId, resp)
+
+    replyMessage(msg, 'Bello, My Name is Hatsuki')
 })
 
 // bot.onText(/\/findPrice (.+)/, async function (msg, match) {
@@ -82,7 +82,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
         for (let index = 0; index < tweet.photos.length; index++) {
             const photo = tweet.photos[index]
-            await sendMessage(chatId, `<${tweetShortName}> [${index}]: \n ${photo}`)
+            await replyMessage(msg, `<${tweetShortName}> [${index}]: \n ${photo}`)
         }
     }
     else {
@@ -90,72 +90,128 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     }
 })
 
-bot.onText(/\/(shortcut|sc) (.*)/, async (msg, match) => {
+bot.onText(/\/sc(.*)/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
         return
     }
 
-    const args = match?.[2]?.split(' ')
-    if (!args) {
-        console.log(`Unable to parse ${match}`)
-        return
+    const isReply = msg?.reply_to_message != null
+    const commandPrefix = 'sc'
+    const modeRegexs = [
+        {
+            "type": "list",
+            "replyRegex": null,
+            "commandRegex": new RegExp(`\/${commandPrefix}list$`)
+        },
+        {
+            "type": "add",
+            "replyRegex": new RegExp(`\/${commandPrefix}add (.*)$`),
+            "commandRegex": new RegExp(`\/${commandPrefix}add (.*) (.*)$`)
+        },
+        {
+            "type": "post",
+            "replyRegex": null,
+            "commandRegex": new RegExp(`\/${commandPrefix}post (.*)$`)
+        },
+        {
+            "type": "edit",
+            "replyRegex": new RegExp(`\/${commandPrefix}edit (.*)$`),
+            "commandRegex": new RegExp(`\/${commandPrefix}edit (.*) (.*)$`)
+        },
+        {
+            "type": "delete",
+            "replyRegex": null,
+            "commandRegex": new RegExp(`\/${commandPrefix}del (.*)$`)
+        }
+    ]
+
+    const option = modeRegexs.map(x => {
+        replyMatch = msg.text.match(x.replyRegex)
+        if (isReply && replyMatch) {
+            const replyStickerId = msg?.reply_to_message?.sticker?.file_id
+            return { "mode": x.type, key: replyMatch?.[1], value: replyStickerId }
+        }
+
+        commandMatch = msg.text.match(x.commandRegex)
+        if (commandMatch) {
+            return { "mode": x.type, key: commandMatch?.[1], value: commandMatch?.[2] }
+        }
+
+        return null
+    }).filter(Boolean)?.[0]
+
+    console.log(`Detect ${chatId} request image shortcut with option [${JSON.stringify(option)}]`)
+
+    // no match!
+    if (option == null) {
+        return;
     }
 
-    const isPost = args.length === 1 && args?.[0] !== 'list'
-
-    const postOption = {
-        mode: 'post',
-        key: args[0],
-        value: null
-    }
-    const editOption = {
-        mode: args[0],
-        key: args[1],
-        value: args[2]
-    }
-
-    const option = isPost ? postOption : editOption
     const matchShortCut = await ImageShortcut(option)
-    console.log(`Detect ${chatId} request image shortcut with option [${JSON.stringify(option)}], bot responses [${JSON.stringify(matchShortCut)}]`)
+    console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
-        const link = matchShortCut.result.link
-        const isSticker = link.substring(link.length - 5, link.length) === '.webp'
-        if (isSticker) {
-            sendSticker(chatId, matchShortCut.result.link)
-        }
-        else {
-            sendPhoto(chatId, matchShortCut.result.link)
-        }
+        const link = matchShortCut.result.link ?? matchShortCut.result.file_id
+        const isSticker = !link.startsWith(`http`) || link.substring(link.length - 5, link.length) === '.webp'
+        const send = isSticker ? replySticker : replyPhoto
+        send(msg, link)
     }
     else {
-        sendMessage(chatId, matchShortCut.message)
+        replyMessage(msg, matchShortCut.message)
     }
 })
 
-async function sendMessage (chatId, link) {
+async function sendMessage(msg, link) {
     try {
-        bot.sendMessage(chatId, link)
+        bot.sendMessage(msg.chat.id, link)
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function sendPhoto (chatId, link) {
+async function replyMessage(msg, link) {
     try {
-        bot.sendPhoto(chatId, link)
+        bot.sendMessage(msg.chat.id, link, { "reply_to_message_id": msg.message_id })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function sendSticker (chatId, link) {
+async function sendPhoto(msg, link) {
     try {
-        bot.sendSticker(chatId, link)
+        bot.sendPhoto(msg.chat.id, link)
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+async function replyPhoto(msg, link) {
+    try {
+        bot.sendPhoto(msg.chat.id, link, { "reply_to_message_id": msg.message_id })
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+
+async function sendSticker(msg, link) {
+    try {
+        bot.sendSticker(msg.chat.id, link)
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+async function replySticker(msg, linkOrFileId) {
+    try {
+        bot.sendSticker(msg.chat.id, linkOrFileId, { "reply_to_message_id": msg.message_id })
     }
     catch (err) {
         console.error(err)

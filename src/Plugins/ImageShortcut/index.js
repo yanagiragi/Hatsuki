@@ -7,7 +7,8 @@ const data = fs.existsSync(dataPath)
     ? JSON.parse(fs.readFileSync(dataPath, 'utf8'))
     : []
 
-async function ImageShortcut (option) {
+// Supported modes: [ post, add, edit, delete/remove, list ]
+async function ImageShortcut(option) {
     const match = data.filter(x => x.shortcut === option.key)?.[0]
 
     if (option.mode === 'post') {
@@ -30,14 +31,23 @@ async function ImageShortcut (option) {
         if (match) {
             return {
                 isOK: false,
-                message: `Unable to set a exist key [${option.key}]`
+                message: `Unable to set an exist key [${option.key}]`
             }
         }
 
-        data.push({
-            shortcut: option.key,
-            link: option.value
-        })
+        if (option.value.startsWith('http')) {
+            data.push({
+                shortcut: option.key,
+                link: option.value
+            })
+        }
+        else {
+            data.push({
+                shortcut: option.key,
+                file_id: option.value
+            })
+        }
+
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
 
         return {
@@ -50,11 +60,16 @@ async function ImageShortcut (option) {
         if (!match) {
             return {
                 isOK: false,
-                message: `Unable to found a exist key [${option.key}] to edit`
+                message: `Unable to found an exist key [${option.key}] to edit`
             }
         }
 
-        match.link = option.value
+        if (option.value.startsWith('http')) {
+            match.link = option.value
+        }
+        else {
+            match.file_id = option.value
+        }
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
 
         return {
@@ -67,7 +82,7 @@ async function ImageShortcut (option) {
         if (!match) {
             return {
                 isOK: false,
-                message: `Unable to found a exist key [${option.key}] to delete`
+                message: `Unable to found an exist key [${option.key}] to delete`
             }
         }
 
