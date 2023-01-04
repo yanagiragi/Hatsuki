@@ -90,6 +90,29 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     }
 })
 
+bot.onText(/(.*)/, async (msg, match) => {
+    const chatId = msg.chat.id
+    if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const option = {
+        mode: 'post',
+        key: match?.[1]
+    }
+
+    const matchShortCut = await ImageShortcut(option)
+    console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
+
+    if (matchShortCut.isOK && matchShortCut.result) {
+        const link = matchShortCut.result.link ?? matchShortCut.result.file_id
+        const isSticker = !link.startsWith(`http`) || link.substring(link.length - 5, link.length) === '.webp'
+        const send = isSticker ? replySticker : replyPhoto
+        send(msg, link)
+    }
+})
+
 bot.onText(/\/sc(.*)/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
@@ -124,6 +147,11 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
             "type": "delete",
             "replyRegex": null,
             "commandRegex": new RegExp(`\/${commandPrefix}del (.*)$`)
+        },
+        {
+            "type": "getlink",
+            "replyRegex": new RegExp(`\/${commandPrefix}getlink`),
+            "commandRegex": null
         }
     ]
 
@@ -146,6 +174,13 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
 
     // no match!
     if (option == null) {
+        return;
+    }
+
+    if (option.mode == 'getlink') {
+        var metadata = await bot.getFile(option.value)
+        var link = `https://api.telegram.org/file/bot${config.TelegramToken}/${metadata.file_path}`
+        replyMessage(msg, link)
         return;
     }
 
