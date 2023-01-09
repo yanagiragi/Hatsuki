@@ -107,7 +107,7 @@ bot.onText(/(.*)/, async (msg, match) => {
 
     if (matchShortCut.isOK && matchShortCut.result) {
         const link = matchShortCut.result.link ?? matchShortCut.result.file_id
-        const isSticker = !link.startsWith(`http`) || link.substring(link.length - 5, link.length) === '.webp'
+        const isSticker = matchShortCut.type == 'sticker'
         const send = isSticker ? replySticker : replyPhoto
         send(msg, link)
     }
@@ -159,7 +159,8 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
         replyMatch = msg.text.match(x.replyRegex)
         if (isReply && replyMatch) {
             const replyStickerId = msg?.reply_to_message?.sticker?.file_id
-            return { "mode": x.type, key: replyMatch?.[1], value: replyStickerId }
+            const replyPhotoId = msg?.reply_to_message?.photo?.reverse()?.[0]?.file_id
+            return { "mode": x.type, key: replyMatch?.[1], value: replyStickerId ?? replyPhotoId }
         }
 
         commandMatch = msg.text.match(x.commandRegex)
@@ -189,7 +190,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
 
     if (matchShortCut.isOK && matchShortCut.result) {
         const link = matchShortCut.result.link ?? matchShortCut.result.file_id
-        const isSticker = !link.startsWith(`http`) || link.substring(link.length - 5, link.length) === '.webp'
+        const isSticker = matchShortCut.type == 'sticker'
         const send = isSticker ? replySticker : replyPhoto
         send(msg, link)
     }
