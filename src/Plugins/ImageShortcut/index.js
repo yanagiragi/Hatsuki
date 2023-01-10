@@ -42,7 +42,7 @@ async function ImageShortcut (option) {
                 type: 'url'
             })
         }
-        else if (option.isPhoto) {
+        else if (option.isPhoto && !option.value.endsWith('.webp')) {
             data.push({
                 shortcut: option.key,
                 value: option.value,
@@ -73,12 +73,7 @@ async function ImageShortcut (option) {
             }
         }
 
-        if (option.value.startsWith('http')) {
-            match.link = option.value
-        }
-        else {
-            match.file_id = option.value
-        }
+        match.value = option.value
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
 
         return {
