@@ -106,10 +106,9 @@ bot.onText(/(.*)/, async (msg, match) => {
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
-        const link = matchShortCut.result.link ?? matchShortCut.result.file_id
-        const isSticker = matchShortCut.type == 'sticker'
+        const isSticker = matchShortCut.result.type === 'sticker'
         const send = isSticker ? replySticker : replyPhoto
-        send(msg, link)
+        send(msg, matchShortCut.result.value)
     }
 })
 
@@ -124,48 +123,59 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
     const commandPrefix = 'sc'
     const modeRegexs = [
         {
-            "type": "list",
-            "replyRegex": null,
-            "commandRegex": new RegExp(`\/${commandPrefix}list$`)
+            type: 'list',
+            replyRegex: null,
+            commandRegex: new RegExp(`\/${commandPrefix}list$`)
         },
         {
-            "type": "add",
-            "replyRegex": new RegExp(`\/${commandPrefix}add (.*)$`),
-            "commandRegex": new RegExp(`\/${commandPrefix}add (.*) (.*)$`)
+            type: 'add',
+            replyRegex: new RegExp(`\/${commandPrefix}add (.*)$`),
+            commandRegex: new RegExp(`\/${commandPrefix}add (.*) (.*)$`)
         },
         {
-            "type": "post",
-            "replyRegex": null,
-            "commandRegex": new RegExp(`\/${commandPrefix}post (.*)$`)
+            type: 'post',
+            replyRegex: null,
+            commandRegex: new RegExp(`\/${commandPrefix}post (.*)$`)
         },
         {
-            "type": "edit",
-            "replyRegex": new RegExp(`\/${commandPrefix}edit (.*)$`),
-            "commandRegex": new RegExp(`\/${commandPrefix}edit (.*) (.*)$`)
+            type: 'edit',
+            replyRegex: new RegExp(`\/${commandPrefix}edit (.*)$`),
+            commandRegex: new RegExp(`\/${commandPrefix}edit (.*) (.*)$`)
         },
         {
-            "type": "delete",
-            "replyRegex": null,
-            "commandRegex": new RegExp(`\/${commandPrefix}del (.*)$`)
+            type: 'delete',
+            replyRegex: null,
+            commandRegex: new RegExp(`\/${commandPrefix}del (.*)$`)
         },
         {
-            "type": "getlink",
-            "replyRegex": new RegExp(`\/${commandPrefix}getlink`),
-            "commandRegex": null
+            type: 'getlink',
+            replyRegex: new RegExp(`\/${commandPrefix}getlink`),
+            commandRegex: null
         }
     ]
 
     const option = modeRegexs.map(x => {
-        replyMatch = msg.text.match(x.replyRegex)
+        const replyMatch = msg.text.match(x.replyRegex)
         if (isReply && replyMatch) {
             const replyStickerId = msg?.reply_to_message?.sticker?.file_id
             const replyPhotoId = msg?.reply_to_message?.photo?.reverse()?.[0]?.file_id
-            return { "mode": x.type, key: replyMatch?.[1], value: replyStickerId ?? replyPhotoId }
+            const isPhoto = replyStickerId === null
+            return {
+                mode: x.type,
+                key: replyMatch?.[1],
+                value: isPhoto ? replyPhotoId : replyStickerId,
+                isPhoto
+            }
         }
 
-        commandMatch = msg.text.match(x.commandRegex)
+        const commandMatch = msg.text.match(x.commandRegex)
         if (commandMatch) {
-            return { "mode": x.type, key: commandMatch?.[1], value: commandMatch?.[2] }
+            return {
+                mode: x.type,
+                key: commandMatch?.[1],
+                value: commandMatch?.[2],
+                isPhoto: true
+            }
         }
 
         return null
@@ -175,24 +185,28 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
 
     // no match!
     if (option == null) {
-        return;
+        return
     }
 
-    if (option.mode == 'getlink') {
-        var metadata = await bot.getFile(option.value)
-        var link = `https://api.telegram.org/file/bot${config.TelegramToken}/${metadata.file_path}`
+    if (option.mode === 'getlink') {
+        if (chatId !== config.Administrator) {
+            console.log(`Skip getlink from ${chatId} since it is not an administrator`)
+            return
+        }
+
+        const metadata = await bot.getFile(option.value)
+        const link = `https://api.telegram.org/file/bot${config.TelegramToken}/${metadata.file_path}`
         replyMessage(msg, link)
-        return;
+        return
     }
 
     const matchShortCut = await ImageShortcut(option)
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
-        const link = matchShortCut.result.link ?? matchShortCut.result.file_id
-        const isSticker = matchShortCut.type == 'sticker'
+        const isSticker = matchShortCut.result.type === 'sticker'
         const send = isSticker ? replySticker : replyPhoto
-        send(msg, link)
+        send(msg, matchShortCut.result.value)
     }
     else {
         replyMessage(msg, matchShortCut.message)
@@ -210,7 +224,7 @@ async function sendMessage(msg, link) {
 
 async function replyMessage(msg, link) {
     try {
-        bot.sendMessage(msg.chat.id, link, { "reply_to_message_id": msg.message_id })
+        bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
@@ -228,13 +242,12 @@ async function sendPhoto(msg, link) {
 
 async function replyPhoto(msg, link) {
     try {
-        bot.sendPhoto(msg.chat.id, link, { "reply_to_message_id": msg.message_id })
+        bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
     }
 }
-
 
 async function sendSticker(msg, link) {
     try {
@@ -247,7 +260,7 @@ async function sendSticker(msg, link) {
 
 async function replySticker(msg, linkOrFileId) {
     try {
-        bot.sendSticker(msg.chat.id, linkOrFileId, { "reply_to_message_id": msg.message_id })
+        bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)

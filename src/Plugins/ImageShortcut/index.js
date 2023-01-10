@@ -38,13 +38,22 @@ async function ImageShortcut(option) {
         if (option.value.startsWith('http')) {
             data.push({
                 shortcut: option.key,
-                link: option.value
+                value: option.value,
+                type: 'url'
+            })
+        }
+        else if (option.isPhoto) {
+            data.push({
+                shortcut: option.key,
+                value: option.value,
+                type: 'photo'
             })
         }
         else {
             data.push({
                 shortcut: option.key,
-                file_id: option.value
+                value: option.value,
+                type: 'sticker'
             })
         }
 
