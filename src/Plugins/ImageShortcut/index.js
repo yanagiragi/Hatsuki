@@ -8,7 +8,7 @@ const data = fs.existsSync(dataPath)
     : []
 
 // Supported modes: [ post, add, edit, delete/remove, list ]
-async function ImageShortcut(option) {
+async function ImageShortcut (option) {
     const match = data.filter(x => x.shortcut === option.key)?.[0]
 
     if (option.mode === 'post') {

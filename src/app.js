@@ -125,31 +125,31 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
         {
             type: 'list',
             replyRegex: null,
-            commandRegex: new RegExp(`\/${commandPrefix}list$`)
+            commandRegex: new RegExp(`/${commandPrefix}list$`)
         },
         {
             type: 'add',
-            replyRegex: new RegExp(`\/${commandPrefix}add (.*)$`),
-            commandRegex: new RegExp(`\/${commandPrefix}add (.*) (.*)$`)
+            replyRegex: new RegExp(`/${commandPrefix}add (.*)$`),
+            commandRegex: new RegExp(`/${commandPrefix}add (.*) (.*)$`)
         },
         {
             type: 'post',
             replyRegex: null,
-            commandRegex: new RegExp(`\/${commandPrefix}post (.*)$`)
+            commandRegex: new RegExp(`/${commandPrefix}post (.*)$`)
         },
         {
             type: 'edit',
-            replyRegex: new RegExp(`\/${commandPrefix}edit (.*)$`),
-            commandRegex: new RegExp(`\/${commandPrefix}edit (.*) (.*)$`)
+            replyRegex: new RegExp(`/${commandPrefix}edit (.*)$`),
+            commandRegex: new RegExp(`/${commandPrefix}edit (.*) (.*)$`)
         },
         {
             type: 'delete',
             replyRegex: null,
-            commandRegex: new RegExp(`\/${commandPrefix}del (.*)$`)
+            commandRegex: new RegExp(`/${commandPrefix}del (.*)$`)
         },
         {
             type: 'getlink',
-            replyRegex: new RegExp(`\/${commandPrefix}getlink`),
+            replyRegex: new RegExp(`/${commandPrefix}getlink`),
             commandRegex: null
         }
     ]
@@ -213,7 +213,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
     }
 })
 
-async function sendMessage(msg, link) {
+async function sendMessage (msg, link) {
     try {
         bot.sendMessage(msg.chat.id, link)
     }
@@ -222,7 +222,7 @@ async function sendMessage(msg, link) {
     }
 }
 
-async function replyMessage(msg, link) {
+async function replyMessage (msg, link) {
     try {
         bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
@@ -231,7 +231,7 @@ async function replyMessage(msg, link) {
     }
 }
 
-async function sendPhoto(msg, link) {
+async function sendPhoto (msg, link) {
     try {
         bot.sendPhoto(msg.chat.id, link)
     }
@@ -240,7 +240,7 @@ async function sendPhoto(msg, link) {
     }
 }
 
-async function replyPhoto(msg, link) {
+async function replyPhoto (msg, link) {
     try {
         bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
@@ -249,7 +249,7 @@ async function replyPhoto(msg, link) {
     }
 }
 
-async function sendSticker(msg, link) {
+async function sendSticker (msg, link) {
     try {
         bot.sendSticker(msg.chat.id, link)
     }
@@ -258,7 +258,7 @@ async function sendSticker(msg, link) {
     }
 }
 
-async function replySticker(msg, linkOrFileId) {
+async function replySticker (msg, linkOrFileId) {
     try {
         bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
     }
