@@ -159,7 +159,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
         if (isReply && replyMatch) {
             const replyStickerId = msg?.reply_to_message?.sticker?.file_id
             const replyPhotoId = msg?.reply_to_message?.photo?.reverse()?.[0]?.file_id
-            const isPhoto = replyStickerId === null
+            const isPhoto = replyStickerId === undefined
             return {
                 mode: x.type,
                 key: replyMatch?.[1],
@@ -213,7 +213,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
     }
 })
 
-async function sendMessage (msg, link) {
+async function sendMessage(msg, link) {
     try {
         bot.sendMessage(msg.chat.id, link)
     }
@@ -222,7 +222,7 @@ async function sendMessage (msg, link) {
     }
 }
 
-async function replyMessage (msg, link) {
+async function replyMessage(msg, link) {
     try {
         bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
@@ -231,7 +231,7 @@ async function replyMessage (msg, link) {
     }
 }
 
-async function sendPhoto (msg, link) {
+async function sendPhoto(msg, link) {
     try {
         bot.sendPhoto(msg.chat.id, link)
     }
@@ -240,7 +240,7 @@ async function sendPhoto (msg, link) {
     }
 }
 
-async function replyPhoto (msg, link) {
+async function replyPhoto(msg, link) {
     try {
         bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
@@ -249,7 +249,7 @@ async function replyPhoto (msg, link) {
     }
 }
 
-async function sendSticker (msg, link) {
+async function sendSticker(msg, link) {
     try {
         bot.sendSticker(msg.chat.id, link)
     }
@@ -258,7 +258,7 @@ async function sendSticker (msg, link) {
     }
 }
 
-async function replySticker (msg, linkOrFileId) {
+async function replySticker(msg, linkOrFileId) {
     try {
         bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
     }
