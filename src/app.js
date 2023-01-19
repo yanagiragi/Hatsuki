@@ -111,9 +111,6 @@ bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
         const send = isSticker ? ReplySticker : ReplyPhoto
         send(msg, matchShortCut.result.value)
     }
-    else {
-
-    }
 })
 
 bot.onText(/\/sc(.*)/, async (msg, match) => {
@@ -228,7 +225,6 @@ bot.onText(/\/avr (.*)/, async (msg, match) => {
     const replyMessages = await AvRecommend(match?.[1])
 
     for (const replyMessage of replyMessages) {
-
         if (isReply) {
             await ReplyPhoto(msg, replyMessage.thumbnail, `${replyMessage.title}\n\n${replyMessage.href}`)
         }

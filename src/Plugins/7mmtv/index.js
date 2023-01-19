@@ -1,12 +1,12 @@
 const Lib7mm = require('./lib7mm')
 const fetch7mm = new Lib7mm()
 
-async function GetReplies(option) {
+async function GetReplies (option) {
     const metadata = await fetch7mm.get(option)
     return metadata
 }
 
-function Handle(text) {
+function Handle (text) {
     if (text === 'live') {
         return [
             {

@@ -2,7 +2,7 @@ const { RequestAsync, ParseDOM } = require('../../utils')
 const url = 'https://7mmtv.tv/zh/'
 
 class Lib7mm {
-    async getShortenUrl(targetUrl) {
+    async getShortenUrl (targetUrl) {
         try {
             const resp = await RequestAsync({
                 url: 'https://is.gd/create.php',
@@ -21,7 +21,7 @@ class Lib7mm {
         }
     }
 
-    async getCensored(url, options) {
+    async getCensored (url, options) {
         const sortByTime = options.sortByTime || false
         const type = options.type || 'single'
 
@@ -64,7 +64,7 @@ class Lib7mm {
         }
     }
 
-    async get(options = {}) {
+    async get (options = {}) {
         return this.getCensored(url, options)
     }
 }
