@@ -6,6 +6,7 @@ const TelegramBot = require('node-telegram-bot-api')
 // const GetSubscriptions = require('./Plugins/Subscriptions/plugin')
 const ParseTweet = require('./Plugins/ParseTweet')
 const ImageShortcut = require('./Plugins/ImageShortcut')
+const AvRecommend = require('./Plugins/7mmtv')
 
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
@@ -20,7 +21,7 @@ bot.onText(/\/start/, function (msg) {
         return
     }
 
-    replyMessage(msg, 'Bello, My Name is Hatsuki')
+    ReplyMessage(msg, 'Bello, My Name is Hatsuki')
 })
 
 // bot.onText(/\/findPrice (.+)/, async function (msg, match) {
@@ -82,7 +83,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
         for (let index = 0; index < tweet.photos.length; index++) {
             const photo = tweet.photos[index]
-            await replyMessage(msg, `<${tweetShortName}> [${index}]: \n ${photo}`)
+            await ReplyMessage(msg, `<${tweetShortName}> [${index}]: \n ${photo}`)
         }
     }
     else {
@@ -90,7 +91,7 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     }
 })
 
-bot.onText(/(.*)/, async (msg, match) => {
+bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -107,8 +108,11 @@ bot.onText(/(.*)/, async (msg, match) => {
 
     if (matchShortCut.isOK && matchShortCut.result) {
         const isSticker = matchShortCut.result.type === 'sticker'
-        const send = isSticker ? replySticker : replyPhoto
+        const send = isSticker ? ReplySticker : ReplyPhoto
         send(msg, matchShortCut.result.value)
+    }
+    else {
+
     }
 })
 
@@ -196,7 +200,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
 
         const metadata = await bot.getFile(option.value)
         const link = `https://api.telegram.org/file/bot${config.TelegramToken}/${metadata.file_path}`
-        replyMessage(msg, link)
+        ReplyMessage(msg, link)
         return
     }
 
@@ -205,15 +209,36 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
 
     if (matchShortCut.isOK && matchShortCut.result) {
         const isSticker = matchShortCut.result.type === 'sticker'
-        const send = isSticker ? replySticker : replyPhoto
+        const send = isSticker ? ReplySticker : ReplyPhoto
         send(msg, matchShortCut.result.value)
     }
     else {
-        replyMessage(msg, matchShortCut.message)
+        ReplyMessage(msg, matchShortCut.message)
     }
 })
 
-async function sendMessage(msg, link) {
+bot.onText(/\/avr (.*)/, async (msg, match) => {
+    const chatId = msg.chat.id
+    if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const isReply = msg?.reply_to_message != null
+    const replyMessages = await AvRecommend(match?.[1])
+
+    for (const replyMessage of replyMessages) {
+
+        if (isReply) {
+            await ReplyPhoto(msg, replyMessage.thumbnail, `${replyMessage.title}\n\n${replyMessage.href}`)
+        }
+        else {
+            await SendPhoto(msg, replyMessage.thumbnail, `${replyMessage.title}\n\n${replyMessage.href}`)
+        }
+    }
+})
+
+async function SendMessage(msg, link) {
     try {
         bot.sendMessage(msg.chat.id, link)
     }
@@ -222,7 +247,7 @@ async function sendMessage(msg, link) {
     }
 }
 
-async function replyMessage(msg, link) {
+async function ReplyMessage(msg, link) {
     try {
         bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
@@ -231,25 +256,25 @@ async function replyMessage(msg, link) {
     }
 }
 
-async function sendPhoto(msg, link) {
+async function SendPhoto(msg, link, caption = null) {
     try {
-        bot.sendPhoto(msg.chat.id, link)
+        bot.sendPhoto(msg.chat.id, link, { caption })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function replyPhoto(msg, link) {
+async function ReplyPhoto(msg, link, caption = null) {
     try {
-        bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id })
+        bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id, caption })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function sendSticker(msg, link) {
+async function SendSticker(msg, link) {
     try {
         bot.sendSticker(msg.chat.id, link)
     }
@@ -258,7 +283,7 @@ async function sendSticker(msg, link) {
     }
 }
 
-async function replySticker(msg, linkOrFileId) {
+async function ReplySticker(msg, linkOrFileId) {
     try {
         bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
     }
