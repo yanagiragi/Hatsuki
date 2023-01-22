@@ -81,10 +81,11 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     const tweet = await ParseTweet(tweetId, config.Twitter_CsrfToken, config.Twitter_AuthToken)
     if (tweet.isSensitive) {
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
-        for (let index = 0; index < tweet.photos.length; index++) {
-            const photo = tweet.photos[index]
-            await ReplyMessage(msg, `<${tweetShortName}> [${index}]: \n ${photo}`)
-        }
+        const metadata = tweet.photos.map((ele, idx) => ({
+        	file_id: ele,
+        	caption: `<${tweetShortName}> [${idx}]`
+        }))
+        await ReplyMediaGroup(msg, metadata)
     }
     else {
         console.log(`Detect ${chatId} post a tweet but content is save. Skip ${tweetShortName}`)
@@ -234,7 +235,7 @@ bot.onText(/\/avr (.*)/, async (msg, match) => {
     }
 })
 
-function SendMessage(msg, link) {
+function SendMessage (msg, link) {
     try {
         return bot.sendMessage(msg.chat.id, link)
     }
@@ -243,7 +244,7 @@ function SendMessage(msg, link) {
     }
 }
 
-function ReplyMessage(msg, link) {
+function ReplyMessage (msg, link) {
     try {
         return bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
@@ -252,7 +253,7 @@ function ReplyMessage(msg, link) {
     }
 }
 
-function SendPhoto(msg, link, caption = null) {
+function SendPhoto (msg, link, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, link, { caption })
     }
@@ -261,7 +262,7 @@ function SendPhoto(msg, link, caption = null) {
     }
 }
 
-function ReplyPhoto(msg, link, caption = null) {
+function ReplyPhoto (msg, link, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id, caption })
     }
@@ -270,7 +271,7 @@ function ReplyPhoto(msg, link, caption = null) {
     }
 }
 
-function SendSticker(msg, link) {
+function SendSticker (msg, link) {
     try {
         return bot.sendSticker(msg.chat.id, link)
     }
@@ -279,11 +280,51 @@ function SendSticker(msg, link) {
     }
 }
 
-function ReplySticker(msg, linkOrFileId) {
+function ReplySticker (msg, linkOrFileId) {
     try {
         return bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
     }
+}
+
+/**
+* Wrapper of sendMediaGroup
+* @param {*} msg telegram native passed object
+* @param {*} photos photo metadata with { file_id, caption } format
+* @returns awaitable sendMediaGroup calls
+*/
+function SendMediaGroup (msg, photos) {
+	try {
+		const media = photos.map(x => ({
+			type: 'photo',
+			media: x.file_id,
+			caption: x.caption
+		}))
+		return bot.sendMediaGroup(msg.chat.id, media)
+	}
+	catch (err) {
+		console.error(err)
+	}
+}
+
+/**
+* Wrapper of sendMediaGroup
+* @param {*} msg telegram native passed object
+* @param {*} photos photo metadata with { file_id, caption } format
+* @returns awaitable sendMediaGroup calls
+*/
+function ReplyMediaGroup (msg, photos) {
+	try {
+		const media = photos.map(x => ({
+			type: 'photo',
+			media: x.file_id,
+			caption: x.caption
+		}))
+		return bot.sendMediaGroup(msg.chat.id, media, { reply_to_message_id: msg.message_id })
+	}
+	catch (err) {
+		console.error(err)
+	}
 }
