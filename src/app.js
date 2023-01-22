@@ -234,54 +234,54 @@ bot.onText(/\/avr (.*)/, async (msg, match) => {
     }
 })
 
-async function SendMessage(msg, link) {
+function SendMessage(msg, link) {
     try {
-        bot.sendMessage(msg.chat.id, link)
+        return bot.sendMessage(msg.chat.id, link)
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function ReplyMessage(msg, link) {
+function ReplyMessage(msg, link) {
     try {
-        bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
+        return bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function SendPhoto(msg, link, caption = null) {
+function SendPhoto(msg, link, caption = null) {
     try {
-        bot.sendPhoto(msg.chat.id, link, { caption })
+        return bot.sendPhoto(msg.chat.id, link, { caption })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function ReplyPhoto(msg, link, caption = null) {
+function ReplyPhoto(msg, link, caption = null) {
     try {
-        bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id, caption })
+        return bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id, caption })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function SendSticker(msg, link) {
+function SendSticker(msg, link) {
     try {
-        bot.sendSticker(msg.chat.id, link)
+        return bot.sendSticker(msg.chat.id, link)
     }
     catch (err) {
         console.error(err)
     }
 }
 
-async function ReplySticker(msg, linkOrFileId) {
+function ReplySticker(msg, linkOrFileId) {
     try {
-        bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
+        return bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
