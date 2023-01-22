@@ -10,8 +10,8 @@ async function ParseTweet (tweetId, csrfToken = '', authToken = '') {
 module.exports = ParseTweet
 
 if (require.main === module) {
-    (async url => {
-        const result = await ParseTweet(url)
+    (async (tweetId, csrfToken, authToken) => {
+        const result = await ParseTweet(tweetId, csrfToken, authToken)
         console.log(result)
     })(process.argv[2], process.argv[3], process.argv?.[4])
 }
