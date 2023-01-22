@@ -82,8 +82,8 @@ bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     if (tweet.isSensitive) {
         console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
         const metadata = tweet.photos.map((ele, idx) => ({
-        	file_id: ele,
-        	caption: `<${tweetShortName}> [${idx}]`
+            file_id: ele,
+            caption: `<${tweetShortName}> [${idx}]`
         }))
         await ReplyMediaGroup(msg, metadata)
     }
@@ -161,12 +161,22 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
         if (isReply && replyMatch) {
             const replyStickerId = msg?.reply_to_message?.sticker?.file_id
             const replyPhotoId = msg?.reply_to_message?.photo?.reverse()?.[0]?.file_id
-            const isPhoto = replyStickerId === undefined
+            const replyAnimationId = msg?.reply_to_message?.animation?.file_id
+            const isPhoto = replyPhotoId !== undefined
+            const isAnimation = replyAnimationId !== undefined
             return {
                 mode: x.type,
                 key: replyMatch?.[1],
-                value: isPhoto ? replyPhotoId : replyStickerId,
-                isPhoto
+                value: isPhoto
+                    ? replyPhotoId
+                    : isAnimation
+                        ? replyAnimationId
+                        : replyStickerId,
+                type: isPhoto
+                    ? 'photo'
+                    : isAnimation
+                        ? 'animation'
+                        : 'sticker'
             }
         }
 
@@ -206,8 +216,11 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
-        const isSticker = matchShortCut.result.type === 'sticker'
-        const send = isSticker ? ReplySticker : ReplyPhoto
+        const send = ({
+            sticker: ReplySticker,
+            photo: ReplyPhoto,
+            animation: ReplyAnimation
+        })[matchShortCut.result.type]
         send(msg, matchShortCut.result.value)
     }
     else {
@@ -235,54 +248,54 @@ bot.onText(/\/avr (.*)/, async (msg, match) => {
     }
 })
 
-function SendMessage (msg, link) {
+function SendMessage (msg, content) {
     try {
-        return bot.sendMessage(msg.chat.id, link)
+        return bot.sendMessage(msg.chat.id, content)
     }
     catch (err) {
         console.error(err)
     }
 }
 
-function ReplyMessage (msg, link) {
+function ReplyMessage (msg, content) {
     try {
-        return bot.sendMessage(msg.chat.id, link, { reply_to_message_id: msg.message_id })
+        return bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-function SendPhoto (msg, link, caption = null) {
+function SendPhoto (msg, fileId, caption = null) {
     try {
-        return bot.sendPhoto(msg.chat.id, link, { caption })
+        return bot.sendPhoto(msg.chat.id, fileId, { caption })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-function ReplyPhoto (msg, link, caption = null) {
+function ReplyPhoto (msg, fileId, caption = null) {
     try {
-        return bot.sendPhoto(msg.chat.id, link, { reply_to_message_id: msg.message_id, caption })
+        return bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption })
     }
     catch (err) {
         console.error(err)
     }
 }
 
-function SendSticker (msg, link) {
+function SendSticker (msg, fileId) {
     try {
-        return bot.sendSticker(msg.chat.id, link)
+        return bot.sendSticker(msg.chat.id, fileId)
     }
     catch (err) {
         console.error(err)
     }
 }
 
-function ReplySticker (msg, linkOrFileId) {
+function ReplySticker (msg, fileId) {
     try {
-        return bot.sendSticker(msg.chat.id, linkOrFileId, { reply_to_message_id: msg.message_id })
+        return bot.sendSticker(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
     catch (err) {
         console.error(err)
@@ -296,17 +309,17 @@ function ReplySticker (msg, linkOrFileId) {
 * @returns awaitable sendMediaGroup calls
 */
 function SendMediaGroup (msg, photos) {
-	try {
-		const media = photos.map(x => ({
-			type: 'photo',
-			media: x.file_id,
-			caption: x.caption
-		}))
-		return bot.sendMediaGroup(msg.chat.id, media)
-	}
-	catch (err) {
-		console.error(err)
-	}
+    try {
+        const media = photos.map(x => ({
+            type: 'photo',
+            media: x.file_id,
+            caption: x.caption
+        }))
+        return bot.sendMediaGroup(msg.chat.id, media)
+    }
+    catch (err) {
+        console.error(err)
+    }
 }
 
 /**
@@ -316,15 +329,33 @@ function SendMediaGroup (msg, photos) {
 * @returns awaitable sendMediaGroup calls
 */
 function ReplyMediaGroup (msg, photos) {
-	try {
-		const media = photos.map(x => ({
-			type: 'photo',
-			media: x.file_id,
-			caption: x.caption
-		}))
-		return bot.sendMediaGroup(msg.chat.id, media, { reply_to_message_id: msg.message_id })
-	}
-	catch (err) {
-		console.error(err)
-	}
+    try {
+        const media = photos.map(x => ({
+            type: 'photo',
+            media: x.file_id,
+            caption: x.caption
+        }))
+        return bot.sendMediaGroup(msg.chat.id, media, { reply_to_message_id: msg.message_id })
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+function ReplyAnimation (msg, fileId) {
+    try {
+        return bot.sendAnimation(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+function SendAnimation (msg, fileId) {
+    try {
+        return bot.sendAnimation(msg.chat.id, fileId)
+    }
+    catch (err) {
+        console.error(err)
+    }
 }

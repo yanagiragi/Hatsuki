@@ -7,6 +7,25 @@ const data = fs.existsSync(dataPath)
     ? JSON.parse(fs.readFileSync(dataPath, 'utf8'))
     : []
 
+const GetType = r => {
+    const x = r.toLowerCase()
+    if (x.startsWith('http')) {
+        return 'url'
+    }
+    else if (x.endsWith('.webp')) {
+        return 'sticker'
+    }
+    else if (x.endsWith('.gif') || x.endsWith('.mp4')) {
+        return 'animation'
+    }
+    else if (x.endsWith('.jpg') ||x.endsWith('.jpeg') || x.endsWith('.png')) {
+        return 'photo'
+    }
+    else {
+        return 'sticker'
+    }
+}
+
 // Supported modes: [ post, add, edit, delete/remove, list ]
 async function ImageShortcut (option) {
     const match = data.filter(x => x.shortcut === option.key)?.[0]
@@ -35,18 +54,18 @@ async function ImageShortcut (option) {
             }
         }
 
-        if (option.value.startsWith('http')) {
+        if (option.type == 'photo' && option.value.startsWith('http')) {
             data.push({
                 shortcut: option.key,
                 value: option.value,
                 type: 'url'
             })
         }
-        else if (option.isPhoto && !option.value.endsWith('.webp')) {
+        else if (option.value.endsWith('.webp')) {
             data.push({
                 shortcut: option.key,
                 value: option.value,
-                type: 'photo'
+                type: 'sticker'
             })
         }
         else {
@@ -74,6 +93,7 @@ async function ImageShortcut (option) {
         }
 
         match.value = option.value
+        match.type = option(match.value)
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
 
         return {
