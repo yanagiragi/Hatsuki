@@ -218,6 +218,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
     if (matchShortCut.isOK && matchShortCut.result) {
         const send = ({
             sticker: ReplySticker,
+            url: ReplyPhoto,
             photo: ReplyPhoto,
             animation: ReplyAnimation
         })[matchShortCut.result.type]
