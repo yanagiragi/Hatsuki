@@ -7,8 +7,8 @@ const data = fs.existsSync(dataPath)
     ? JSON.parse(fs.readFileSync(dataPath, 'utf8'))
     : []
 
-const GetType = r => {
-    const x = r.toLowerCase()
+const GetType = (raw) => {
+    const x = raw.toLowerCase()
     if (x.startsWith('http')) {
         return 'url'
     }
@@ -54,14 +54,8 @@ async function ImageShortcut (option) {
             }
         }
 
-        if (option.type == 'photo' && option.value.startsWith('http')) {
-            data.push({
-                shortcut: option.key,
-                value: option.value,
-                type: 'url'
-            })
-        }
-        else if (option.value.endsWith('.webp')) {
+        // special treat webp links
+        if (option.value.endsWith('.webp')) {
             data.push({
                 shortcut: option.key,
                 value: option.value,
@@ -72,7 +66,7 @@ async function ImageShortcut (option) {
             data.push({
                 shortcut: option.key,
                 value: option.value,
-                type: 'sticker'
+                type: option.type
             })
         }
 
