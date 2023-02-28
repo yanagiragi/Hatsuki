@@ -24,6 +24,16 @@ bot.onText(/\/start/, function (msg) {
     ReplyMessage(msg, 'Bello, My Name is Hatsuki')
 })
 
+bot.onText(/\/stat/, function (msg) {
+    const chatId = msg.chat.id
+
+    if (isDev && chatId !== config.Administrator) {
+        return
+    }
+
+    ReplyMessage(msg, JSON.stringify(msg))
+})
+
 // bot.onText(/\/findPrice (.+)/, async function (msg, match) {
 //     const chatId = msg.chat.id
 //     const title = match[1]
@@ -104,7 +114,7 @@ bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
         key: match?.[1]
     }
 
-    const matchShortCut = await ImageShortcut(option)
+    const matchShortCut = await ImageShortcut(msg.chat.id, option)
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
@@ -216,7 +226,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
         return
     }
 
-    const matchShortCut = await ImageShortcut(option)
+    const matchShortCut = await ImageShortcut(msg.chat.id, option)
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {

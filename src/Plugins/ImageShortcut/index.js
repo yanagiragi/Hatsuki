@@ -18,7 +18,7 @@ const GetType = (raw) => {
     else if (x.endsWith('.gif') || x.endsWith('.mp4')) {
         return 'animation'
     }
-    else if (x.endsWith('.jpg') ||x.endsWith('.jpeg') || x.endsWith('.png')) {
+    else if (x.endsWith('.jpg') || x.endsWith('.jpeg') || x.endsWith('.png')) {
         return 'photo'
     }
     else {
@@ -27,8 +27,8 @@ const GetType = (raw) => {
 }
 
 // Supported modes: [ post, add, edit, delete/remove, list ]
-async function ImageShortcut (option) {
-    const match = data.filter(x => x.shortcut === option.key)?.[0]
+async function ImageShortcut(chatId, option) {
+    const match = data.filter(x => x.shortcut === option.key && x.chatId === chatId)?.[0]
 
     if (option.mode === 'post') {
         if (match) {
@@ -57,6 +57,7 @@ async function ImageShortcut (option) {
         // special treat webp links
         if (option.value.endsWith('.webp')) {
             data.push({
+                chatId,
                 shortcut: option.key,
                 value: option.value,
                 type: 'sticker'
@@ -64,6 +65,7 @@ async function ImageShortcut (option) {
         }
         else {
             data.push({
+                chatId,
                 shortcut: option.key,
                 value: option.value,
                 type: option.type
@@ -117,9 +119,13 @@ async function ImageShortcut (option) {
     }
 
     else if (option.mode === 'list') {
+        const shortcuts = data
+            .filter(x => x.chatId === chatId)
+            .map(x => x.shortcut)
+            .sort()
         return {
             isOK: false,
-            message: `Available options are:\n${data.reduce((acc, ele) => `${acc}\n${ele.shortcut}`, '')}`
+            message: `Available options are:\n${JSON.stringify(shortcuts, null, 4)}`
         }
     }
 
