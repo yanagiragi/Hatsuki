@@ -14,7 +14,7 @@ const isDev = config?.isDev ?? true
 
 const bot = new TelegramBot(config.TelegramToken, { polling: true })
 
-bot.onText(/\/start/, function (msg) {
+bot.onText(/^\/start/, function (msg) {
     const chatId = msg.chat.id
 
     if (isDev && chatId !== config.Administrator) {
@@ -24,7 +24,7 @@ bot.onText(/\/start/, function (msg) {
     ReplyMessage(msg, 'Bello, My Name is Hatsuki')
 })
 
-bot.onText(/\/stat/, function (msg) {
+bot.onText(/^\/stat/, function (msg) {
     const chatId = msg.chat.id
 
     if (isDev && chatId !== config.Administrator) {
@@ -73,7 +73,7 @@ bot.onText(/\/stat/, function (msg) {
 
 // setInterval(Subscribes, 1000 * 60 * 10)
 
-bot.onText(/https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
+bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
     if (config.Feature_RepostMatureTweet === null || config.Feature_RepostMatureTweet === false) {
         return
     }
@@ -128,7 +128,7 @@ bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
     }
 })
 
-bot.onText(/\/sc(.*)/, async (msg, match) => {
+bot.onText(/^\/sc(.*)/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -243,7 +243,7 @@ bot.onText(/\/sc(.*)/, async (msg, match) => {
     }
 })
 
-bot.onText(/\/avr (.*)/, async (msg, match) => {
+bot.onText(/^\/avr (.*)/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
