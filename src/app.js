@@ -7,6 +7,7 @@ const TelegramBot = require('node-telegram-bot-api')
 const ParseTweet = require('./Plugins/ParseTweet')
 const ImageShortcut = require('./Plugins/ImageShortcut')
 const AvRecommend = require('./Plugins/7mmtv')
+const { GetChannelAlias, SetChannelAlias } = require('./Plugins/ChannelAlias')
 
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
@@ -114,7 +115,8 @@ bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
         key: match?.[1]
     }
 
-    const matchShortCut = await ImageShortcut(msg.chat.id, option)
+    const newChatId = GetChannelAlias(chatId)
+    const matchShortCut = await ImageShortcut(newChatId, option)
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
@@ -226,7 +228,8 @@ bot.onText(/^\/sc(.*)/, async (msg, match) => {
         return
     }
 
-    const matchShortCut = await ImageShortcut(msg.chat.id, option)
+    const newChatId = GetChannelAlias(chatId)
+    const matchShortCut = await ImageShortcut(newChatId, option)
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
@@ -261,6 +264,33 @@ bot.onText(/^\/avr (.*)/, async (msg, match) => {
             await SendPhoto(msg, replyMessage.thumbnail, `${replyMessage.title}\n\n${replyMessage.href}`)
         }
     }
+})
+
+bot.onText(/^\/alias get (.*)/, async (msg, match) => {
+    const chatId = msg.chat.id
+    if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const source = match[1]
+
+    const target = GetChannelAlias(source)
+    ReplyMessage(msg, `[ChannelAlias] Get ${source}: ${target}`)
+})
+
+bot.onText(/^\/alias set (.*) (.*)/, async (msg, match) => {
+    const chatId = msg.chat.id
+    if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const source = match[1]
+    const target = match[2]
+
+    const isSuccess = SetChannelAlias(source, target)
+    ReplyMessage(msg, `[ChannelAlias] Set ${source} to ${target}: ${isSuccess}`)
 })
 
 function SendMessage(msg, content) {
