@@ -27,56 +27,56 @@ node src/app.js
 
 * 支援使用回覆設定 shortcut
 
-```bash
-# MODE = [post|add|edit|delete|remove]
-/shortcut $MODE $KEY $VALUE
+* 功能:
+  * post: 根據 `$KEY` 貼出對應的圖片
+  * add: 增加 `$KEY`, 對應的圖片為 `$VALUE`
+  * edit: 將 `$KEY` 對應的圖片複寫為 `$VALUE`
+  * remove/delete: 移除 `$KEY` 對應的圖片
+  * list: 列出所有的 `$KEY`
 
-# or `sc` for short
-/sc $MODE $KEY $VALUE
+* 範例:
+  ```bash
+  # MODE = [post|add|edit|delete|remove]
+  /shortcut $MODE $KEY $VALUE
 
-# or shortcut of `/shortcut post $KEY`
-/sc $KEY
+  # or `sc` for short
+  /sc$MODE $KEY $VALUE
 
-# or just type $KEY
-$KEY
+  # or shortcut of `/shortcut post $KEY`
+  /sc $KEY
 
-# list all options
-/sc list
-```
+  # or just type $KEY
+  $KEY
 
-1. post: 根據 `$KEY` 貼出對應的圖片
-
-1. add: 增加 `$KEY`, 對應的圖片為 `$VALUE`
-
-1. edit: 將 `$KEY` 對應的圖片複寫為 `$VALUE`
-
-1. remove/delete: 移除 `$KEY` 對應的圖片
-
-1. list: 列出所有的 `$KEY`
+  # list all options
+  /sclist
+  ```
 
 ## 學術影片推薦
 
-* 把之前[練習機器人的linebot](https://github.com/yanagiragi/yanagi-linebot) porting 過來, 會推薦一些充滿學術價值的影片
+* 把第一次寫機器人時嘗試寫的[linebot](https://github.com/yanagiragi/yanagi-linebot) porting 過來, 會推薦一些充滿學術價值的影片
 
-```bash
-# 請機器人推薦一片avr = av recommendation
-/avr [抽|u]
+* 範例:
+  ```bash
+  # 請機器人推薦一片, avr = av recommendation
+  /avr [抽|u]
 
-# 根據發帖時間排序請機器人推薦一片, 
-/avr [排|u2]
+  # 根據發帖時間排序請機器人推薦一片
+  /avr [排|u2]
 
-# 請機器人推薦好多片片
-/avr [我全都要|all]
-```
+  # 請機器人推薦好多片片
+  /avr [我全都要|all]
+  ```
 
 ## Channel Alias
 
 * 快速貼圖片 延伸出的需求, 希望可以讓別的 channel 也可以直接使用別的 channel 設定好的 shortcut
 
-```bash
-# 或許 $KEY 的 alias, 若無 alias 則返回 $KEY
-/alias get $KEY
+* 範例:
+  ```bash
+  # 或許 $KEY 的 alias, 若無 alias 則返回 $KEY
+  /alias get $KEY
 
-# 讓 $KEY 頻道的貼圖都 alis 成 $KEY_ALIAS
-/alias set $KEY $KEY_ALIAS
-```
+  # 讓 $KEY 頻道的貼圖都 alis 成 $KEY_ALIAS
+  /alias set $KEY $KEY_ALIAS
+  ```
