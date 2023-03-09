@@ -74,7 +74,7 @@ node src/app.js
 
 * 範例:
   ```bash
-  # 或許 $KEY 的 alias, 若無 alias 則返回 $KEY
+  # 獲取 $KEY 的 alias, 若無 alias 則返回 $KEY
   /alias get $KEY
 
   # 讓 $KEY 頻道的貼圖都 alis 成 $KEY_ALIAS
