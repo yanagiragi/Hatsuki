@@ -2,16 +2,18 @@
 
 自己用的 telegram 機器人
 
-## 初始設定
+# 初始設定
 
 ```bash
-# edit config.json first before start bot
+# edit config.json first before start bot, note we use `json` not `jsonc`
 cp config.template.jsonc config.json
 vim config.json
 
 # start the bot
 node src/app.js
 ```
+
+# 功能
 
 ## Twitter 圖片轉發
 
@@ -20,6 +22,10 @@ node src/app.js
 * config 中 `Feature_RepostMatureTweet` 要設定為 true 才會開啟此功能
 
 ## 快速貼圖片
+
+* tg 的貼圖太多了, 因此寫一個小工具可以幫貼圖設定 key, 打 key 就會自動回覆對應的貼圖
+
+* 支援使用回覆設定 shortcut
 
 ```bash
 # MODE = [post|add|edit|delete|remove]
@@ -30,6 +36,9 @@ node src/app.js
 
 # or shortcut of `/shortcut post $KEY`
 /sc $KEY
+
+# or just type $KEY
+$KEY
 
 # list all options
 /sc list
@@ -44,3 +53,30 @@ node src/app.js
 1. remove/delete: 移除 `$KEY` 對應的圖片
 
 1. list: 列出所有的 `$KEY`
+
+## 學術影片推薦
+
+* 把之前[練習機器人的linebot](https://github.com/yanagiragi/yanagi-linebot) porting 過來, 會推薦一些充滿學術價值的影片
+
+```bash
+# 請機器人推薦一片avr = av recommendation
+/avr [抽|u]
+
+# 根據發帖時間排序請機器人推薦一片, 
+/avr [排|u2]
+
+# 請機器人推薦好多片片
+/avr [我全都要|all]
+```
+
+## Channel Alias
+
+* 快速貼圖片 延伸出的需求, 希望可以讓別的 channel 也可以直接使用別的 channel 設定好的 shortcut
+
+```bash
+# 或許 $KEY 的 alias, 若無 alias 則返回 $KEY
+/alias get $KEY
+
+# 讓 $KEY 頻道的貼圖都 alis 成 $KEY_ALIAS
+/alias set $KEY $KEY_ALIAS
+```
