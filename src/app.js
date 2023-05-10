@@ -87,20 +87,8 @@ bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => 
 
     const tweetAccount = match[1]
     const tweetId = match[2]
-    const tweetShortName = `${tweetAccount}/${tweetId}`
 
-    const tweet = await ParseTweet(tweetId, config.Twitter_CsrfToken, config.Twitter_AuthToken)
-    if (tweet.isSensitive) {
-        console.log(`Detect ${chatId} post a sensitive tweet, repost ${JSON.stringify(tweet)}`)
-        const metadata = tweet.photos.map((ele, idx) => ({
-            file_id: ele,
-            caption: `<${tweetShortName}> [${idx}]`
-        }))
-        await ReplyMediaGroup(msg, metadata)
-    }
-    else {
-        console.log(`Detect ${chatId} post a tweet but content is save. Skip ${tweetShortName}`)
-    }
+    ReplyMessage(msg, `https://fxtwitter.com/${tweetAccount}/status/${tweetId}`)
 })
 
 bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
