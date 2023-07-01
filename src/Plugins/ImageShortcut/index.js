@@ -1,6 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
+const regexStartPattern = 'r/'
+
 const dataPath = path.join(__dirname, '/data.json')
 
 const data = fs.existsSync(dataPath)
@@ -26,9 +28,35 @@ const GetType = (raw) => {
     }
 }
 
+function Match(shortcutConfig, key, chatId) {
+    if (shortcutConfig.shortcut.startsWith(regexStartPattern)) {
+        const rawRegex = shortcutConfig.shortcut.substring(regexStartPattern.length)
+        try {
+            const regex = new RegExp(rawRegex)
+            const match = key.toString().match(regex)
+            const hasMatched = match !== null && shortcutConfig.chatId === chatId
+
+            if (hasMatched) {
+                console.log(`detect regex match = ${rawRegex}, key = ${key}, match = ${match?.[1]}`)
+            }
+            else {
+                console.log(`detect regex not match = ${rawRegex}, key = ${key}, match = ${match?.[1]}`)
+            }
+
+            return hasMatched
+        }
+        catch (error) {
+            console.error(`Invalid regex = ${rawRegex}, error = ${error}`)
+            return false
+        }
+    }
+
+    return shortcutConfig.shortcut === key && shortcutConfig.chatId === chatId
+}
+
 // Supported modes: [ post, add, edit, delete/remove, list ]
 async function ImageShortcut(chatId, option) {
-    const match = data.filter(x => x.shortcut === option.key && x.chatId === chatId)?.[0]
+    const match = data.filter(x => Match(x, option.key, chatId))?.[0]
 
     if (option.mode === 'post') {
         if (match) {

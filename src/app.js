@@ -12,6 +12,8 @@ const { GetChannelAlias, SetChannelAlias } = require('./Plugins/ChannelAlias')
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
 const isDev = config?.isDev ?? true
+const previousMessages = []
+const maxPreviousMessagesLength = 4
 
 const bot = new TelegramBot(config.TelegramToken, { polling: true })
 
@@ -91,11 +93,45 @@ bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => 
     ReplyMessage(msg, `https://fxtwitter.com/${tweetAccount}/status/${tweetId}`)
 })
 
-bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
+// Handles multiple line messages
+bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
+    const processedMsg = msg.text.replace(/[\n\t]/g, '')
+
+    previousMessages.push(processedMsg)
+    if (previousMessages.length > maxPreviousMessagesLength) {
+        previousMessages.slice(0)
+    }
+
+    // normal case
+    const processedMatch = processedMsg.match(/^(?!\/)(.*)$/)
+    if (await HandleShortcut(msg, processedMatch)) {
+        previousMessages.length = 0
+    }
+
+    // case consider previous message
+    for (let i = 0; i < maxPreviousMessagesLength; ++i) {
+        if (i >= previousMessages.length) {
+            break
+        }
+
+        const concatedPrevMessage = previousMessages.slice(i, previousMessages.length).join('')
+        const concatedPrevMessageMatch = concatedPrevMessage.match(/^(?!\/)(.*)$/)
+        if (await HandleShortcut(msg, concatedPrevMessageMatch)) {
+            console.log(`concatedPrevMessage = ${concatedPrevMessage} matched. Clear previousMessages`)
+            previousMessages.length = 0
+            break
+        }
+        else {
+            console.log(`concatedPrevMessage = ${concatedPrevMessage} not matched.`)
+        }
+    }
+})
+
+async function HandleShortcut(msg, match) {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
-        return
+        return false
     }
 
     const option = {
@@ -115,8 +151,12 @@ bot.onText(/^(?!\/)(.*)$/, async (msg, match) => {
             animation: ReplyAnimation
         })[matchShortCut.result.type]
         send(msg, matchShortCut.result.value)
+
+        return true
     }
-})
+
+    return false
+}
 
 bot.onText(/^\/sc(.*)/, async (msg, match) => {
     const chatId = msg.chat.id
