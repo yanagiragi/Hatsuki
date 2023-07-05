@@ -111,7 +111,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
 
     // normal case
     const processedMatch = processedMsg.match(/^(?!\/)(.*)$/)
-    if (await HandleShortcut(msg, processedMatch)) {
+    if (await HandleShortcut(msg, processedMatch?.[1])) {
         previousMessages.length = 0
     }
 
@@ -119,7 +119,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     for (let i = 0; i < previousMessages.length; ++i) {
         const concatedPrevMessage = previousMessages.slice(i, previousMessages.length).join('')
         const concatedPrevMessageMatch = concatedPrevMessage.match(/^(?!\/)(.*)$/)
-        if (await HandleShortcut(msg, concatedPrevMessageMatch)) {
+        if (await HandleShortcut(msg, concatedPrevMessageMatch?.[1])) {
             console.log(`concatedPrevMessage = ${concatedPrevMessage} matched. Clear previousMessages`)
             previousMessages.length = 0
             break
@@ -130,7 +130,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     }
 })
 
-async function HandleShortcut(msg, match) {
+async function HandleShortcut(msg, matchedContent) {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -139,7 +139,7 @@ async function HandleShortcut(msg, match) {
 
     const option = {
         mode: 'post',
-        key: match?.[1]
+        key: matchedContent
     }
 
     const newChatId = GetChannelAlias(chatId)
@@ -324,6 +324,45 @@ bot.onText(/^\/alias set (.*) (.*)/, async (msg, match) => {
     ReplyMessage(msg, `[ChannelAlias] Set ${source} to ${target}: ${isSuccess}`)
 })
 
+bot.onText(/^\/getbase64/, async function (msg) {
+    const isReply = msg?.reply_to_message != null
+    const repliedMessage = msg?.reply_to_message
+    const checkMsg = isReply ? repliedMessage : msg
+
+    if (!isReply) {
+        return ReplyMessage(msg, 'This command can only used in reply mode.')
+    }
+
+    if (!checkMsg.photo && !checkMsg?.document?.mime_type?.startsWith('image')) {
+        return
+    }
+
+    const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[0].file_id
+    const base64String = await GetBase64(fileId)
+
+    // reply a hard-coded sticker for now
+    await ReplySticker(msg, 'CAACAgUAAxkBAAIuDGSNf9Fv48q6fK5ocLK6VIZjuBL1AAIJAQACaCScIHq23TgvlRnMLwQ')
+
+    return ReplyMessage(msg, `base64 = \n${base64String}`)
+})
+
+bot.on('message', async msg => {
+    const OnlySupportPost = true // hard-coded config
+
+    const isReply = msg?.reply_to_message != null
+    const repliedMessage = msg?.reply_to_message
+    const checkMsg = (!OnlySupportPost && isReply) ? repliedMessage : msg
+
+    if (!checkMsg.photo && !checkMsg?.document?.mime_type?.startsWith('image')) {
+        return
+    }
+
+    const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[0].file_id
+    const base64String = await GetBase64(fileId)
+
+    return HandleShortcut(msg, base64String)
+})
+
 function SendMessage(msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content)
@@ -434,4 +473,12 @@ function SendAnimation(msg, fileId) {
     catch (err) {
         console.error(err)
     }
+}
+
+async function GetBase64(fileId) {
+    const link = await bot.getFileLink(fileId)
+    const response = await fetch(link)
+    const arrayBuffer = await response.arrayBuffer()
+    const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+    return base64String
 }
