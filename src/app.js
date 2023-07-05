@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const fetch = require('node-fetch')
 const TelegramBot = require('node-telegram-bot-api')
 
 // const FindPrice = require('./Plugins/FindPrice/plugin')
@@ -98,7 +99,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     const processedMsg = msg.text.replace(/[\n\t]/g, '')
 
     // if current message is a link, don't add it into previous messages
-    if (processedMsg.startsWith('https://')) {
+    if (processedMsg.startsWith('https://') || processedMsg.startsWith('base64://')) {
         return
     }
 
@@ -343,7 +344,7 @@ bot.onText(/^\/getbase64/, async function (msg) {
     // reply a hard-coded sticker for now
     await ReplySticker(msg, 'CAACAgUAAxkBAAIuDGSNf9Fv48q6fK5ocLK6VIZjuBL1AAIJAQACaCScIHq23TgvlRnMLwQ')
 
-    return ReplyMessage(msg, `base64 = \n${base64String}`)
+    return ReplyMessage(msg, `base64://${base64String}`)
 })
 
 bot.on('message', async msg => {
@@ -360,7 +361,7 @@ bot.on('message', async msg => {
     const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[0].file_id
     const base64String = await GetBase64(fileId)
 
-    return HandleShortcut(msg, base64String)
+    return HandleShortcut(msg, `base64://${base64String}`)
 })
 
 function SendMessage(msg, content) {

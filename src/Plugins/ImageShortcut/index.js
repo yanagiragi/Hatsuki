@@ -29,6 +29,11 @@ const GetType = (raw) => {
 }
 
 function Match(shortcutConfig, key, chatId) {
+    // don't match link with regexs
+    if (key.startsWith('https://') || key.startsWith('base64://')) {
+        return shortcutConfig.shortcut === key && shortcutConfig.chatId === chatId
+    }
+
     if (shortcutConfig.shortcut.startsWith(regexStartPattern)) {
         const rawRegex = shortcutConfig.shortcut.substring(regexStartPattern.length)
         try {
