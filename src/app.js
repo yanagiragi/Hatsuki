@@ -338,7 +338,7 @@ bot.onText(/^\/getbase64/, async function (msg) {
         return
     }
 
-    const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[0].file_id
+    const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[checkMsg.photo.length - 1].file_id
     const base64String = await GetBase64(fileId)
 
     // reply a hard-coded sticker for now
@@ -358,7 +358,7 @@ bot.on('message', async msg => {
         return
     }
 
-    const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[0].file_id
+    const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[checkMsg.photo.length - 1].file_id
     const base64String = await GetBase64(fileId)
 
     return HandleShortcut(msg, `base64://${base64String}`)
@@ -481,5 +481,5 @@ async function GetBase64(fileId) {
     const response = await fetch(link)
     const arrayBuffer = await response.arrayBuffer()
     const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
-    return base64String
+    return base64String.substring(0, 256) + base64String.substring(base64String.length - 256, base64String.length)
 }
