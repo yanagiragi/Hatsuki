@@ -97,10 +97,17 @@ bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => 
 bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     const processedMsg = msg.text.replace(/[\n\t]/g, '')
 
-    previousMessages.push(processedMsg)
-    if (previousMessages.length > maxPreviousMessagesLength) {
-        previousMessages.slice(0)
+    // if current message is a link, don't add it into previous messages
+    if (processedMsg.startsWith('https://')) {
+        return
     }
+
+    previousMessages.push(processedMsg)
+    while (previousMessages.length > maxPreviousMessagesLength) {
+        console.log(`shift, len = ${previousMessages.length}`)
+        previousMessages.shift()
+    }
+    console.log(`previousMessages = ${previousMessages}`)
 
     // normal case
     const processedMatch = processedMsg.match(/^(?!\/)(.*)$/)
@@ -109,11 +116,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     }
 
     // case consider previous message
-    for (let i = 0; i < maxPreviousMessagesLength; ++i) {
-        if (i >= previousMessages.length) {
-            break
-        }
-
+    for (let i = 0; i < previousMessages.length; ++i) {
         const concatedPrevMessage = previousMessages.slice(i, previousMessages.length).join('')
         const concatedPrevMessageMatch = concatedPrevMessage.match(/^(?!\/)(.*)$/)
         if (await HandleShortcut(msg, concatedPrevMessageMatch)) {
@@ -122,7 +125,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
             break
         }
         else {
-            console.log(`concatedPrevMessage = ${concatedPrevMessage} not matched.`)
+            // console.log(`concatedPrevMessage = ${concatedPrevMessage} not matched.`)
         }
     }
 })
