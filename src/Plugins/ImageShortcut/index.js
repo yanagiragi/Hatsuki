@@ -28,9 +28,9 @@ const GetType = (raw) => {
     }
 }
 
-function Match(shortcutConfig, key, chatId) {
+function Match (shortcutConfig, key, chatId) {
     // don't match link with regexs
-    if (key.startsWith('https://') || key.startsWith('base64://')) {
+    if (key != null && (key.startsWith('https://') || key.startsWith('base64://'))) {
         return shortcutConfig.shortcut === key && shortcutConfig.chatId === chatId
     }
 
@@ -60,7 +60,7 @@ function Match(shortcutConfig, key, chatId) {
 }
 
 // Supported modes: [ post, add, edit, delete/remove, list ]
-async function ImageShortcut(chatId, option) {
+async function ImageShortcut (chatId, option) {
     const match = data.filter(x => Match(x, option.key, chatId))?.[0]
 
     if (option.mode === 'post') {
