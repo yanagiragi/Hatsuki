@@ -131,7 +131,7 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     }
 })
 
-async function HandleShortcut(msg, matchedContent) {
+async function HandleShortcut (msg, matchedContent) {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -154,7 +154,16 @@ async function HandleShortcut(msg, matchedContent) {
             photo: ReplyPhoto,
             animation: ReplyAnimation
         })[matchShortCut.result.type]
+
         send(msg, matchShortCut.result.value)
+
+        if (config.LogMatchedShortcutToAdminChannel) {
+            SendMessage({
+                chat: {
+                    id: config.AdminChannelId
+                }
+            }, `matchedContent = ${matchedContent}, result = ${JSON.stringify(matchShortCut.result)}`)
+        }
 
         return true
     }
@@ -364,7 +373,7 @@ bot.on('message', async msg => {
     return HandleShortcut(msg, `base64://${base64String}`)
 })
 
-function SendMessage(msg, content) {
+function SendMessage (msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content)
     }
@@ -373,7 +382,7 @@ function SendMessage(msg, content) {
     }
 }
 
-function ReplyMessage(msg, content) {
+function ReplyMessage (msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id })
     }
@@ -382,7 +391,7 @@ function ReplyMessage(msg, content) {
     }
 }
 
-function SendPhoto(msg, fileId, caption = null) {
+function SendPhoto (msg, fileId, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, fileId, { caption })
     }
@@ -391,7 +400,7 @@ function SendPhoto(msg, fileId, caption = null) {
     }
 }
 
-function ReplyPhoto(msg, fileId, caption = null) {
+function ReplyPhoto (msg, fileId, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption })
     }
@@ -400,7 +409,7 @@ function ReplyPhoto(msg, fileId, caption = null) {
     }
 }
 
-function SendSticker(msg, fileId) {
+function SendSticker (msg, fileId) {
     try {
         return bot.sendSticker(msg.chat.id, fileId)
     }
@@ -409,7 +418,7 @@ function SendSticker(msg, fileId) {
     }
 }
 
-function ReplySticker(msg, fileId) {
+function ReplySticker (msg, fileId) {
     try {
         return bot.sendSticker(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
@@ -424,7 +433,7 @@ function ReplySticker(msg, fileId) {
 * @param {*} photos photo metadata with { file_id, caption } format
 * @returns awaitable sendMediaGroup calls
 */
-function SendMediaGroup(msg, photos) {
+function SendMediaGroup (msg, photos) {
     try {
         const media = photos.map(x => ({
             type: 'photo',
@@ -444,7 +453,7 @@ function SendMediaGroup(msg, photos) {
 * @param {*} photos photo metadata with { file_id, caption } format
 * @returns awaitable sendMediaGroup calls
 */
-function ReplyMediaGroup(msg, photos) {
+function ReplyMediaGroup (msg, photos) {
     try {
         const media = photos.map(x => ({
             type: 'photo',
@@ -458,7 +467,7 @@ function ReplyMediaGroup(msg, photos) {
     }
 }
 
-function ReplyAnimation(msg, fileId) {
+function ReplyAnimation (msg, fileId) {
     try {
         return bot.sendAnimation(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
@@ -467,7 +476,7 @@ function ReplyAnimation(msg, fileId) {
     }
 }
 
-function SendAnimation(msg, fileId) {
+function SendAnimation (msg, fileId) {
     try {
         return bot.sendAnimation(msg.chat.id, fileId)
     }
@@ -476,7 +485,7 @@ function SendAnimation(msg, fileId) {
     }
 }
 
-async function GetBase64(fileId) {
+async function GetBase64 (fileId) {
     const link = await bot.getFileLink(fileId)
     const response = await fetch(link)
     const arrayBuffer = await response.arrayBuffer()
