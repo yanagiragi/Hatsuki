@@ -139,7 +139,7 @@ function PreprocessShortcutMessage(message) {
 
 // full width to half width
 function ToCDB(str) {
-    let tmp = '';
+    let tmp = ''
     for (var i = 0; i < str.length; i++) {
         if (str.charCodeAt(i) === 12288) {
             tmp += String.fromCharCode(str.charCodeAt(i) - 12256);
@@ -394,7 +394,14 @@ bot.on('message', async msg => {
     const fileId = checkMsg?.document?.file_id ?? checkMsg.photo[checkMsg.photo.length - 1].file_id
     const base64String = await GetBase64(fileId)
 
-    return HandleShortcut(msg, `base64://${base64String}`)
+    if (checkMsg.caption.length > 0) {
+        console.log(`Detect caption [${checkMsg.caption}]. Try match with imageShortcut`)
+        HandleShortcut(msg, PreprocessShortcutMessage(checkMsg.caption))
+    }
+
+    if (base64String) {
+        HandleShortcut(msg, `base64://${base64String}`)
+    }
 })
 
 function SendMessage(msg, content) {
@@ -510,9 +517,14 @@ function SendAnimation(msg, fileId) {
 }
 
 async function GetBase64(fileId) {
-    const link = await bot.getFileLink(fileId)
-    const response = await fetch(link)
-    const arrayBuffer = await response.arrayBuffer()
-    const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
-    return base64String.substring(0, 256) + base64String.substring(base64String.length - 256, base64String.length)
+    try {
+        const link = await bot.getFileLink(fileId)
+        const response = await fetch(link)
+        const arrayBuffer = await response.arrayBuffer()
+        const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+        return base64String.substring(0, 256) + base64String.substring(base64String.length - 256, base64String.length)
+    } catch (err) {
+        console.err(`Detect error when convert ${fileId} to base64, Raw err = ${err.message}`)
+        return null
+    }
 }
