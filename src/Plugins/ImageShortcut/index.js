@@ -56,12 +56,17 @@ function Match (shortcutConfig, key, chatId) {
         }
     }
 
+    return PlainMatch(shortcutConfig, key, chatId)
+}
+
+function PlainMatch (shortcutConfig, key, chatId) {
     return shortcutConfig.shortcut === key && shortcutConfig.chatId === chatId
 }
 
 // Supported modes: [ post, add, edit, delete/remove, list ]
 async function ImageShortcut (chatId, option) {
-    const match = data.filter(x => Match(x, option.key, chatId))?.[0]
+    const matchFunc = option.mode === 'post' ? Match : PlainMatch
+    const match = data.filter(x => matchFunc(x, option.key, chatId))?.[0]
 
     if (option.mode === 'post') {
         if (match) {
