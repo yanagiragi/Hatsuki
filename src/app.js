@@ -96,7 +96,7 @@ bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => 
 
 // Handles multiple line messages
 bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
-    const processedMsg = msg.text.replace(/[\n\t]/g, '')
+    const processedMsg = PreprocessShortcutMessage(msg.text)
 
     // if current message is a link, don't add it into previous messages
     if (processedMsg.startsWith('https://') || processedMsg.startsWith('base64://')) {
@@ -131,7 +131,31 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     }
 })
 
-async function HandleShortcut (msg, matchedContent) {
+function PreprocessShortcutMessage(message) {
+    let result = ToCDB(message)
+    result = result.replace(/[\n\t]/g, '')
+    return result
+}
+
+// full width to half width
+function ToCDB(str) {
+    let tmp = '';
+    for (var i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) === 12288) {
+            tmp += String.fromCharCode(str.charCodeAt(i) - 12256);
+            continue
+        }
+        if (str.charCodeAt(i) > 65280 && str.charCodeAt(i) < 65375) {
+            tmp += String.fromCharCode(str.charCodeAt(i) - 65248)
+        }
+        else {
+            tmp += String.fromCharCode(str.charCodeAt(i))
+        }
+    }
+    return tmp
+}
+
+async function HandleShortcut(msg, matchedContent) {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -373,7 +397,7 @@ bot.on('message', async msg => {
     return HandleShortcut(msg, `base64://${base64String}`)
 })
 
-function SendMessage (msg, content) {
+function SendMessage(msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content)
     }
@@ -382,7 +406,7 @@ function SendMessage (msg, content) {
     }
 }
 
-function ReplyMessage (msg, content) {
+function ReplyMessage(msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id })
     }
@@ -391,7 +415,7 @@ function ReplyMessage (msg, content) {
     }
 }
 
-function SendPhoto (msg, fileId, caption = null) {
+function SendPhoto(msg, fileId, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, fileId, { caption })
     }
@@ -400,7 +424,7 @@ function SendPhoto (msg, fileId, caption = null) {
     }
 }
 
-function ReplyPhoto (msg, fileId, caption = null) {
+function ReplyPhoto(msg, fileId, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption })
     }
@@ -409,7 +433,7 @@ function ReplyPhoto (msg, fileId, caption = null) {
     }
 }
 
-function SendSticker (msg, fileId) {
+function SendSticker(msg, fileId) {
     try {
         return bot.sendSticker(msg.chat.id, fileId)
     }
@@ -418,7 +442,7 @@ function SendSticker (msg, fileId) {
     }
 }
 
-function ReplySticker (msg, fileId) {
+function ReplySticker(msg, fileId) {
     try {
         return bot.sendSticker(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
@@ -433,7 +457,7 @@ function ReplySticker (msg, fileId) {
 * @param {*} photos photo metadata with { file_id, caption } format
 * @returns awaitable sendMediaGroup calls
 */
-function SendMediaGroup (msg, photos) {
+function SendMediaGroup(msg, photos) {
     try {
         const media = photos.map(x => ({
             type: 'photo',
@@ -453,7 +477,7 @@ function SendMediaGroup (msg, photos) {
 * @param {*} photos photo metadata with { file_id, caption } format
 * @returns awaitable sendMediaGroup calls
 */
-function ReplyMediaGroup (msg, photos) {
+function ReplyMediaGroup(msg, photos) {
     try {
         const media = photos.map(x => ({
             type: 'photo',
@@ -467,7 +491,7 @@ function ReplyMediaGroup (msg, photos) {
     }
 }
 
-function ReplyAnimation (msg, fileId) {
+function ReplyAnimation(msg, fileId) {
     try {
         return bot.sendAnimation(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
@@ -476,7 +500,7 @@ function ReplyAnimation (msg, fileId) {
     }
 }
 
-function SendAnimation (msg, fileId) {
+function SendAnimation(msg, fileId) {
     try {
         return bot.sendAnimation(msg.chat.id, fileId)
     }
@@ -485,7 +509,7 @@ function SendAnimation (msg, fileId) {
     }
 }
 
-async function GetBase64 (fileId) {
+async function GetBase64(fileId) {
     const link = await bot.getFileLink(fileId)
     const response = await fetch(link)
     const arrayBuffer = await response.arrayBuffer()
