@@ -99,12 +99,12 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     const processedMsg = PreprocessShortcutMessage(msg.text)
 
     // if current message is a link, don't add it into previous messages
-    const blacklist = [
+    const blacklists = [
         'https://',
         'base64://',
         'www.'
     ]
-    if (blacklist.filter(processedMsg.includes).length > 0) {
+    if (blacklists.filter(x => processedMsg.includes(x)).length > 0) {
         return
     }
 
