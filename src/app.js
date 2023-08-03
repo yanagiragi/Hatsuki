@@ -13,7 +13,7 @@ const { GetChannelAlias, SetChannelAlias } = require('./Plugins/ChannelAlias')
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
 const isDev = config?.isDev ?? true
-const previousMessages = []
+const previousMessages = {}
 const maxPreviousMessagesLength = 4
 
 const bot = new TelegramBot(config.TelegramToken, { polling: true })
@@ -94,6 +94,18 @@ bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => 
     ReplyMessage(msg, `https://fxtwitter.com/${tweetAccount}/status/${tweetId}`)
 })
 
+function RecordPreviousMessages (chatId, content) {
+    if (!(chatId in previousMessages)) {
+        previousMessages[chatId] = []
+    }
+
+    previousMessages[chatId].push(content)
+    while (previousMessages[chatId].length > maxPreviousMessagesLength) {
+        console.log(`shift, len = ${previousMessages[chatId].length}`)
+        previousMessages[chatId].shift()
+    }
+}
+
 // Handles multiple line messages
 bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     const processedMsg = PreprocessShortcutMessage(msg.text)
@@ -108,26 +120,22 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
         return
     }
 
-    previousMessages.push(processedMsg)
-    while (previousMessages.length > maxPreviousMessagesLength) {
-        console.log(`shift, len = ${previousMessages.length}`)
-        previousMessages.shift()
-    }
-    console.log(`previousMessages = ${previousMessages}`)
+    const chatId = GetChannelAlias(msg.chat.id)
+    RecordPreviousMessages(chatId, processedMsg)
 
     // normal case
     const processedMatch = processedMsg.match(/^(?!\/)(.*)$/)
     if (await HandleShortcut(msg, processedMatch?.[1])) {
-        previousMessages.length = 0
+        previousMessages[chatId].length = 0
     }
 
     // case consider previous message
-    for (let i = 0; i < previousMessages.length; ++i) {
-        const concatedPrevMessage = previousMessages.slice(i, previousMessages.length).join('')
+    for (let i = 0; i < previousMessages[chatId].length; ++i) {
+        const concatedPrevMessage = previousMessages[chatId].slice(i, previousMessages[chatId].length).join('')
         const concatedPrevMessageMatch = concatedPrevMessage.match(/^(?!\/)(.*)$/)
         if (await HandleShortcut(msg, concatedPrevMessageMatch?.[1])) {
             console.log(`concatedPrevMessage = ${concatedPrevMessage} matched. Clear previousMessages`)
-            previousMessages.length = 0
+            previousMessages[chatId].length = 0
             break
         }
         else {
@@ -136,16 +144,16 @@ bot.onText(/^(?!\/)(.*)/, async (msg, match) => {
     }
 })
 
-function PreprocessShortcutMessage(message) {
+function PreprocessShortcutMessage (message) {
     let result = ToCDB(message)
     result = result.replace(/[\n\t]/g, '')
     return result
 }
 
 // full width to half width
-function ToCDB(str) {
+function ToCDB (str) {
     let tmp = ''
-    for (var i = 0; i < str.length; i++) {
+    for (let i = 0; i < str.length; i++) {
         if (str.charCodeAt(i) === 12288) {
             tmp += String.fromCharCode(str.charCodeAt(i) - 12256);
             continue
@@ -160,7 +168,7 @@ function ToCDB(str) {
     return tmp
 }
 
-async function HandleShortcut(msg, matchedContent) {
+async function HandleShortcut (msg, matchedContent) {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -409,7 +417,7 @@ bot.on('message', async msg => {
     }
 })
 
-function SendMessage(msg, content) {
+function SendMessage (msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content)
     }
@@ -418,7 +426,7 @@ function SendMessage(msg, content) {
     }
 }
 
-function ReplyMessage(msg, content) {
+function ReplyMessage (msg, content) {
     try {
         return bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id })
     }
@@ -427,7 +435,7 @@ function ReplyMessage(msg, content) {
     }
 }
 
-function SendPhoto(msg, fileId, caption = null) {
+function SendPhoto (msg, fileId, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, fileId, { caption })
     }
@@ -436,7 +444,7 @@ function SendPhoto(msg, fileId, caption = null) {
     }
 }
 
-function ReplyPhoto(msg, fileId, caption = null) {
+function ReplyPhoto (msg, fileId, caption = null) {
     try {
         return bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption })
     }
@@ -445,7 +453,7 @@ function ReplyPhoto(msg, fileId, caption = null) {
     }
 }
 
-function SendSticker(msg, fileId) {
+function SendSticker (msg, fileId) {
     try {
         return bot.sendSticker(msg.chat.id, fileId)
     }
@@ -454,7 +462,7 @@ function SendSticker(msg, fileId) {
     }
 }
 
-function ReplySticker(msg, fileId) {
+function ReplySticker (msg, fileId) {
     try {
         return bot.sendSticker(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
@@ -469,7 +477,7 @@ function ReplySticker(msg, fileId) {
 * @param {*} photos photo metadata with { file_id, caption } format
 * @returns awaitable sendMediaGroup calls
 */
-function SendMediaGroup(msg, photos) {
+function SendMediaGroup (msg, photos) {
     try {
         const media = photos.map(x => ({
             type: 'photo',
@@ -489,7 +497,7 @@ function SendMediaGroup(msg, photos) {
 * @param {*} photos photo metadata with { file_id, caption } format
 * @returns awaitable sendMediaGroup calls
 */
-function ReplyMediaGroup(msg, photos) {
+function ReplyMediaGroup (msg, photos) {
     try {
         const media = photos.map(x => ({
             type: 'photo',
@@ -503,7 +511,7 @@ function ReplyMediaGroup(msg, photos) {
     }
 }
 
-function ReplyAnimation(msg, fileId) {
+function ReplyAnimation (msg, fileId) {
     try {
         return bot.sendAnimation(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
     }
@@ -512,7 +520,7 @@ function ReplyAnimation(msg, fileId) {
     }
 }
 
-function SendAnimation(msg, fileId) {
+function SendAnimation (msg, fileId) {
     try {
         return bot.sendAnimation(msg.chat.id, fileId)
     }
@@ -521,7 +529,7 @@ function SendAnimation(msg, fileId) {
     }
 }
 
-async function GetBase64(fileId) {
+async function GetBase64 (fileId) {
     try {
         const link = await bot.getFileLink(fileId)
         const response = await fetch(link)
