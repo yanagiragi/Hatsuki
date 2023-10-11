@@ -9,12 +9,15 @@ const ParseTweet = require('./Plugins/ParseTweet')
 const ImageShortcut = require('./Plugins/ImageShortcut')
 const AvRecommend = require('./Plugins/7mmtv')
 const { GetChannelAlias, SetChannelAlias } = require('./Plugins/ChannelAlias')
+const { GetIdMetadatas, GetIdMetadata, SetIdMetadata } = require('./Plugins/IdMetadata')
 
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
 const isDev = config?.isDev ?? true
 const previousMessages = {}
 const maxPreviousMessagesLength = 4
+
+var europeanId = null
 
 const bot = new TelegramBot(config.TelegramToken, { polling: true })
 
@@ -393,8 +396,72 @@ bot.onText(/^\/getbase64/, async function (msg) {
     return ReplyMessage(msg, `base64://${base64String}`)
 })
 
+bot.onText(/^\/getId/, async (msg, match) => {
+    const chatId = msg.chat.id
+    if (isDev && chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const metadata = GetIdMetadatas()
+    return ReplyMessage(msg, JSON.stringify(metadata))
+})
+
+bot.onText(/^\/setId (.*) (.*)/, async (msg, match) => {
+    const chatId = msg.chat.id
+    if (chatId !== config.Administrator) {
+        console.log(`Skip message from ${chatId} since it is not an administrator`)
+        return
+    }
+
+    const alias = match?.[1]
+    const id = match?.[2]
+    const metadata = GetIdMetadata(alias)
+
+    SetIdMetadata(alias, id)
+
+    const message = metadata ? `Update ${alias} to ${id}` : `Add ${alias} as ${id}`
+    return ReplyMessage(msg, message)
+})
+
+bot.onText(/^\/setEuroId (.*)/, async (msg, match) => {
+    if (msg.from.id != config.Administrator) {
+        console.log(`Detect ${msg.from.id} requests admin command`)
+        // reply `thanks for your advices` sticker
+        return ReplySticker(msg, 'CAACAgUAAxkBAAICpmUmikfaQ3LyItyiVXhnQCNMyUagAAJSBgACTV9AVeKw46ho_0jGMAQ')
+    }
+
+    const alias = match?.[1]
+
+    if (alias === 'null') {
+        europeanId = null
+        return ReplyMessage(msg, 'Success set euro Id to null')
+    }
+
+    const metadata = GetIdMetadata(alias)
+    if (!metadata) {
+        return ReplyMessage(msg, `Unable to find id: ${alias}`)
+    }
+
+    europeanId = metadata
+    return ReplyMessage(msg, `Success set euro Id to ${alias}`)
+})
+
 bot.on('message', async msg => {
     const OnlySupportPost = true // hard-coded config
+
+    const telegramId = msg.from.id
+    const telegramName = msg.from.username
+
+    if (!GetIdMetadata(telegramName)) {
+        console.log(`Record ${telegramName} with id ${telegramId}`)
+        SetIdMetadata(telegramName, telegramId)
+    }
+
+    if (europeanId != null && telegramId == europeanId) {
+        // reply `too low favorability` sticker
+        return ReplySticker(msg, 'CAACAgUAAxkBAAJLyWUmHlfs7vnzHbfJfUy7iHSPGOhPAAKPAAOfYlYax9eyOy4eqeEwBA')
+    }
 
     const isReply = msg?.reply_to_message != null
     const repliedMessage = msg?.reply_to_message
