@@ -604,7 +604,7 @@ async function GetBase64 (fileId) {
         const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
         return base64String.substring(0, 256) + base64String.substring(base64String.length - 256, base64String.length)
     } catch (err) {
-        console.err(`Detect error when convert ${fileId} to base64, Raw err = ${err.message}`)
+        console.error(`Detect error when convert ${fileId} to base64, Raw err = ${err.message}`)
         return null
     }
 }
