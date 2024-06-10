@@ -80,7 +80,10 @@ bot.onText(/^\/stat/, function (msg) {
 
 // setInterval(Subscribes, 1000 * 60 * 10)
 
-bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => {
+bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, ReplyTwitter)
+bot.onText(/^https:\/\/x.com\/(.*)\/status\/(\d+)/, ReplyTwitter)
+
+async function ReplyTwitter (msg, match) {
     if (config.Feature_RepostMatureTweet === null || config.Feature_RepostMatureTweet === false) {
         return
     }
@@ -95,7 +98,7 @@ bot.onText(/^https:\/\/twitter.com\/(.*)\/status\/(\d+)/, async (msg, match) => 
     const tweetId = match[2]
 
     ReplyMessage(msg, `https://fxtwitter.com/${tweetAccount}/status/${tweetId}`)
-})
+}
 
 function RecordPreviousMessages (chatId, content) {
     if (!(chatId in previousMessages)) {
