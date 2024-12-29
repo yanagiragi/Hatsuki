@@ -401,7 +401,7 @@ bot.onText(/^\/getbase64/, async function (msg) {
 
 bot.onText(/^\/getid/, async (msg, match) => {
     const chatId = msg.chat.id
-    if (isDev && chatId !== config.Administrator) {
+    if (chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
         return
     }
