@@ -399,7 +399,7 @@ bot.onText(/^\/getbase64/, async function (msg) {
     return ReplyMessage(msg, `base64://${base64String}`)
 })
 
-bot.onText(/^\/getId/, async (msg, match) => {
+bot.onText(/^\/getid/, async (msg, match) => {
     const chatId = msg.chat.id
     if (isDev && chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -410,7 +410,7 @@ bot.onText(/^\/getId/, async (msg, match) => {
     return ReplyMessage(msg, JSON.stringify(metadata))
 })
 
-bot.onText(/^\/setId (.*) (.*)/, async (msg, match) => {
+bot.onText(/^\/setid (.*) (.*)/, async (msg, match) => {
     const chatId = msg.chat.id
     if (chatId !== config.Administrator) {
         console.log(`Skip message from ${chatId} since it is not an administrator`)
@@ -427,7 +427,7 @@ bot.onText(/^\/setId (.*) (.*)/, async (msg, match) => {
     return ReplyMessage(msg, message)
 })
 
-bot.onText(/^\/setEuroId (.*)/, async (msg, match) => {
+bot.onText(/^\/seteuroid (.*)/, async (msg, match) => {
     if (msg.from.id != config.Administrator) {
         console.log(`Detect ${msg.from.id} requests admin command`)
         // reply `thanks for your advices` sticker
