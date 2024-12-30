@@ -83,7 +83,7 @@ async function handler (msg, match, config, bot) {
     }
 
     if (option.mode === 'getlink') {
-        if (chatId !== config.Administrator) {
+        if (chatId !== config['Bot.Administrator']) {
             console.log(`Skip getlink from ${chatId} since it is not an administrator`)
             return
         }

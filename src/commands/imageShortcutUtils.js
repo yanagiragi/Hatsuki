@@ -27,10 +27,10 @@ async function HandleShortcut (msg, matchedContent, config, bot) {
             await bot.ReplyAnimation(msg, matchShortCut.result.value)
         }
 
-        if (config.LogMatchedShortcutToAdminChannel) {
+        if (config['ImageShortcut.Report.Enabled']) {
             await bot.SendMessage({
                 chat: {
-                    id: config.AdminChannelId
+                    id: config['ImageShortcut.Report.ChatId']
                 }
             }, `matchedContent = ${matchedContent}, result = ${JSON.stringify(matchShortCut.result)}`)
         }

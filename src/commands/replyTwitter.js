@@ -1,8 +1,4 @@
 async function handler (msg, match, config, bot) {
-    if (config.Feature_RepostMatureTweet === null || config.Feature_RepostMatureTweet === false) {
-        return
-    }
-
     const tweetAccount = match[1]
     const tweetId = match[2]
 

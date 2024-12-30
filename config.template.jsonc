@@ -1,13 +1,15 @@
 {
     // core settings
     "TelegramToken": "TG_BOT_TOKEN",
-    "Administrator": "TG_USER_ID_IN_NUMBER",
     "isDev": true,
-
-    // Third party settings
-    "Twitter_CsrfToken": "TWITTER_CSRF_TOKEN_FOR_MATURE_CONTENT",
-    "Twitter_AuthToken": "TWITTER_AUTH_TOKEN_FOR_MATURE_CONTENT",
-
+    "Bot.Administrator": TG_USER_ID_IN_NUMBER,
+    "Bot.ChatIdList": [
+        {
+            "nickname": "human readable nickname",
+            "chatId": TG_CHAT_ID_IN_NUMBER
+        }
+    ],
     // bot feature settings
-    "Feature_RepostMatureTweet": false
+    "ImageShortcut.Report.ChatId": TG_CHAT_ID_IN_NUMBER,
+    "ImageShortcut.Report.Emabled": true,
 }
