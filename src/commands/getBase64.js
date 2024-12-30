@@ -21,7 +21,7 @@ async function handler (msg, match, config, bot) {
 }
 
 module.exports = {
-    isAdminCommand: false,
+    isAdminCommand: true,
     matches: [
         /^\/getbase64/
     ],

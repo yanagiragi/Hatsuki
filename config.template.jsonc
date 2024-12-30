@@ -12,4 +12,8 @@
     // bot feature settings
     "ImageShortcut.Report.ChatId": TG_CHAT_ID_IN_NUMBER,
     "ImageShortcut.Report.Emabled": true,
+    "AvRecommend.Enabled": true,
+    "EuropeanMode.Enabled": true,
+    "RepostTwitterImage.Enabled": true,
+    "ImageShortcut.Enabled": true
 }

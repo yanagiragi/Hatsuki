@@ -3,6 +3,10 @@ const { GetIdMetadata } = require('../Plugins/IdMetadata')
 const key = 'europeanId'
 
 async function handler (msg, match, config, bot) {
+    if (!config['EuropeanMode.Enabled']) {
+        return
+    }
+
     if (msg.from.id !== config['Bot.Administrator']) {
         console.log(`Detect ${msg.from.id} requests admin command`)
         // reply `thanks for your advices` sticker

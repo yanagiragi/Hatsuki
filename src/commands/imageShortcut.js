@@ -2,6 +2,10 @@ const { GetChannelAlias } = require('../Plugins/ChannelAlias')
 const ImageShortcut = require('../Plugins/ImageShortcut')
 
 async function handler (msg, match, config, bot) {
+    if (!config['ImageShortcut.Enabled']) {
+        return
+    }
+
     const chatId = msg.chat.id
     const isReply = msg?.reply_to_message != null
     const commandPrefix = 'sc'

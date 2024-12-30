@@ -1,4 +1,8 @@
 async function handler (msg, match, config, bot) {
+    if (!config['RepostTwitterImage.Enabled']) {
+        return
+    }
+
     const tweetAccount = match[1]
     const tweetId = match[2]
 

@@ -1,6 +1,9 @@
 const AvRecommend = require('../Plugins/7mmtv')
 
 async function handler (msg, match, config, bot) {
+    if (!config['AvRecommend.Enabled']) {
+        return
+    }
     const isReply = msg?.reply_to_message != null
     const replyMessages = await AvRecommend(match?.[1])
 

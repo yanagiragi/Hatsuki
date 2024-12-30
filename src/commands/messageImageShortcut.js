@@ -1,6 +1,10 @@
 const { HandleShortcut, PreprocessShortcutMessage } = require('./imageShortcutUtils')
 
 async function handler (msg, match, config, bot) {
+    if (!config['ImageShortcut.Enabled']) {
+        return
+    }
+
     const OnlySupportPost = true // hard-coded config
 
     const isReply = msg?.reply_to_message != null
