@@ -10,6 +10,12 @@ function loadCommands (bot, commands, config) {
     for (const command of commands) {
         const { isAdminCommand, event, matches, handler } = require(`./commands/${command}.js`)
         const callback = async (msg, match) => {
+            const chatId = msg.chat.id
+            if (!config.ChatIdList?.find(x => x.chatId === chatId)) {
+                console.log(`Skip message from [${chatId}][${msg.chat.title}] since it is not a allowed chat`)
+                return
+            }
+
             const fromId = msg.from.id
             if ((isDev || isAdminCommand) && fromId !== config.Administrator) {
                 console.log(`Skip message from ${fromId} since it is not an administrator`)
