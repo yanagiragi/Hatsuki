@@ -51,7 +51,8 @@ loadCommands(bot, [
     'euroIdSet',
     'messageEuropean',
     'messageImageShortcut',
-    'messageRecordNewId'
+    'messageRecordNewId',
+    'megaDL'
 ], config)
 
 console.log('bot is ready') 

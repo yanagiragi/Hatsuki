@@ -85,6 +85,19 @@ function ToCDB (str) {
     return tmp
 }
 
+async function NotifyWebhook (url, token, body) {
+    const options = {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+    }
+
+    const resp = await fetch(url, options)
+    return resp.text()
+}
+
 module.exports = {
-    RequestAsync, ParseDOM, GetRequestOptions, ToCDB
+    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook
 }

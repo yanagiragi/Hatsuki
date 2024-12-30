@@ -29,7 +29,7 @@ class Bot {
 
     ReplyMessage (msg, content) {
         try {
-            return this.SendMessage(msg, content, { reply_to_message_id: msg.message_id })
+            return this.bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id })
         }
         catch (err) {
             console.trace(`ReplyMessage: ${err}`)

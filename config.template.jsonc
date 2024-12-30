@@ -2,18 +2,21 @@
     // core settings
     "TelegramToken": "TG_BOT_TOKEN",
     "isDev": true,
-    "Bot.Administrator": TG_USER_ID_IN_NUMBER,
+    "Bot.Administrator": -1, // TG_USER_ID_IN_NUMBER
     "Bot.ChatIdList": [
         {
-            "nickname": "human readable nickname",
-            "chatId": TG_CHAT_ID_IN_NUMBER
+            "nickname": "RANDOM CHANNEL", // human readable nickname, only for comment
+            "chatId": -1 // TG_CHAT_ID_IN_NUMBER
         }
     ],
     // bot feature settings
-    "ImageShortcut.Report.ChatId": TG_CHAT_ID_IN_NUMBER,
+    "ImageShortcut.Enabled": true,
     "ImageShortcut.Report.Emabled": true,
+    "ImageShortcut.Report.ChatId": -1, // TG_CHAT_ID_IN_NUMBER
     "AvRecommend.Enabled": true,
     "EuropeanMode.Enabled": true,
     "RepostTwitterImage.Enabled": true,
-    "ImageShortcut.Enabled": true
+    "MegaDL.Enabled": true,
+    "MegaDL.WebhookUrl": "https://www.example.com", // HTTP_WEB_HOOK
+    "MegaDL.WebhookToken": "" // Bearer token without 'Bearer '
 }
