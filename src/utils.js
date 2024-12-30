@@ -67,24 +67,24 @@ function ParseDOM (content, opts = {}) {
     return cheerio.load(content, opts)
 }
 
-function CleanUpSearchParams (link) {
-    const l = new URL(link)
-    l.search = ''
-    return l.toString()
-}
-
-function CheckMetaContainsChinese (str) {
-    const match = ['中国翻訳', '漢化', '汉化', 'Chinese']
-
-    for (const pattern of match) {
-        if (str.includes(pattern)) {
-            return true
+// full width to half width
+function ToCDB (str) {
+    let tmp = ''
+    for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) === 12288) {
+            tmp += String.fromCharCode(str.charCodeAt(i) - 12256);
+            continue
+        }
+        if (str.charCodeAt(i) > 65280 && str.charCodeAt(i) < 65375) {
+            tmp += String.fromCharCode(str.charCodeAt(i) - 65248)
+        }
+        else {
+            tmp += String.fromCharCode(str.charCodeAt(i))
         }
     }
-
-    return false
+    return tmp
 }
 
 module.exports = {
-    RequestAsync, ParseDOM, GetRequestOptions, CleanUpSearchParams, CheckMetaContainsChinese
+    RequestAsync, ParseDOM, GetRequestOptions, ToCDB
 }
