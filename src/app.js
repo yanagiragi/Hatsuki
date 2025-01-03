@@ -52,7 +52,9 @@ loadCommands(bot, [
     'messageEuropean',
     'messageImageShortcut',
     'messageRecordNewId',
-    'megaDL'
+    'megadl',
+    'ytdl',
+    'ytdlmp3'
 ], config)
 
 console.log('bot is ready') 

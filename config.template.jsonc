@@ -18,5 +18,11 @@
     "RepostTwitterImage.Enabled": true,
     "MegaDL.Enabled": true,
     "MegaDL.WebhookUrl": "https://www.example.com", // HTTP_WEB_HOOK
-    "MegaDL.WebhookToken": "" // Bearer token without 'Bearer '
+    "MegaDL.WebhookToken": "", // Bearer token without 'Bearer '
+    "YtDL.Enabled": true,
+    "YtDL.WebhookUrl": "https://www.example.com", // HTTP_WEB_HOOK
+    "YtDL.WebhookToken": "", // Bearer token without 'Bearer '
+    "YtDLMp3.Enabled": true,
+    "YtDLMp3.WebhookUrl": "https://www.example.com", // HTTP_WEB_HOOK
+    "YtDLMp3.WebhookToken": "" // Bearer token without 'Bearer '
 }
