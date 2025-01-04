@@ -1,5 +1,5 @@
 const { RequestAsync, ParseDOM } = require('../../utils')
-const url = 'https://7mmtv.tv/zh/'
+const url = 'https://7mmtv.sx/zh/'
 
 class Lib7mm {
     async getShortenUrl (targetUrl) {
