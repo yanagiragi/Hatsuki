@@ -67,4 +67,5 @@ src/Plugins/Subscriptions/container.json
 src/Plugins/Subscriptions/Subscriptions
 
 src/Plugins/ImageShortcut/data.json
-config_dev.json
+config_*.json
+src/Plugins/IdMetadata/data.json
