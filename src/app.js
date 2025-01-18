@@ -54,7 +54,8 @@ loadCommands(bot, [
     'messageRecordNewId',
     'megadl',
     'ytdl',
-    'ytdlmp3'
+    'ytdlmp3',
+    'aria2'
 ], config)
 
-console.log('bot is ready') 
+console.log('bot is ready')
