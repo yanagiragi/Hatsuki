@@ -55,7 +55,8 @@ loadCommands(bot, [
     'megadl',
     'ytdl',
     'ytdlmp3',
-    'aria2'
+    'aria2',
+    'aria2ls'
 ], config)
 
 console.log('bot is ready')
