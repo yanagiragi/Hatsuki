@@ -13,5 +13,6 @@ module.exports = {
     matches: [
         /^\/alias set (.*) (.*)/
     ],
+    descriptions: ['alias - Get or set an alias'],
     handler
 }

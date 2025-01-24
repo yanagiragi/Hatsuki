@@ -14,5 +14,6 @@ module.exports = {
     matches: [
         /^\/start/
     ],
+    descriptions: ['start - Greeting from the bot'],
     handler
 }

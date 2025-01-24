@@ -1,10 +1,6 @@
 const { NotifyWebhook } = require('../utils')
 
 async function handler (msg, match, config, bot) {
-    if (!config['YtDL.Enabled']) {
-        return
-    }
-
     const url = match?.[1]
     const content = await NotifyWebhook(config['YtDL.WebhookUrl'], config['YtDL.WebhookToken'], { message: url })
 
@@ -13,8 +9,10 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: true,
+    enableConfig: 'YtDL.Enabled',
     matches: [
         /^\/ytdl (.*)/
     ],
+    descriptions: ['ytdl - Trigger a download youtube video job'],
     handler
 }

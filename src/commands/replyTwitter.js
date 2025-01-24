@@ -1,8 +1,4 @@
 async function handler (msg, match, config, bot) {
-    if (!config['RepostTwitterImage.Enabled']) {
-        return
-    }
-
     const tweetAccount = match[1]
     const tweetId = match[2]
 
@@ -11,6 +7,7 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: false,
+    enableConfig: 'RepostTwitterImage.Enabled',
     matches: [
         /^https:\/\/twitter.com\/(.*)\/status\/(\d+)/,
         /^https:\/\/x.com\/(.*)\/status\/(\d+)/,

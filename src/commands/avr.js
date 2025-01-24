@@ -1,9 +1,6 @@
 const AvRecommend = require('../Plugins/7mmtv')
 
 async function handler (msg, match, config, bot) {
-    if (!config['AvRecommend.Enabled']) {
-        return
-    }
     const isReply = msg?.reply_to_message != null
     const replyMessages = await AvRecommend(match?.[1])
 
@@ -19,8 +16,10 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: false,
+    enableConfig: 'AvRecommend.Enabled',
     matches: [
         /^\/avr (.*)/
     ],
+    descriptions: ['avr - Recommend a random adult video'],
     handler
 }

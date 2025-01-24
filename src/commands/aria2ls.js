@@ -3,10 +3,6 @@ const Aria2 = require('aria2')
 const { FormatFileSize } = require('../utils')
 
 async function handler (msg, match, config, bot) {
-    if (!config['Aria2.Enabled']) {
-        return
-    }
-
     const host = config['Aria2.JsonRpcUrl']
     const secret = config['Aria2.JsonRpcSecret']
 
@@ -25,8 +21,10 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: true,
+    enableConfig: 'Aria2.Enabled',
     matches: [
         /^\/aria2ls/
     ],
+    descriptions: ['aris2ls - List aria2 active donwloads'],
     handler
 }

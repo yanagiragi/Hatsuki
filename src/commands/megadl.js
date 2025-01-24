@@ -1,10 +1,6 @@
 const { NotifyWebhook } = require('../utils')
 
 async function handler (msg, match, config, bot) {
-    if (!config['MegaDL.Enabled']) {
-        return
-    }
-
     const url = match?.[1]
     const content = await NotifyWebhook(config['MegaDL.WebhookUrl'], config['MegaDL.WebhookToken'], { message: url })
 
@@ -13,8 +9,10 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: true,
+    enableConfig: 'MegaDL.Enabled',
     matches: [
         /^\/megadl (.*)/
     ],
+    descriptions: ['megadl - Trigger a download mega job'],
     handler
 }

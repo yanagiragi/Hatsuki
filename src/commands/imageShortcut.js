@@ -1,11 +1,8 @@
 const { GetChannelAlias } = require('../Plugins/ChannelAlias')
 const ImageShortcut = require('../Plugins/ImageShortcut')
+const { descriptions } = require('./aliasGet')
 
 async function handler (msg, match, config, bot) {
-    if (!config['ImageShortcut.Enabled']) {
-        return
-    }
-
     const chatId = msg.chat.id
     const isReply = msg?.reply_to_message != null
     const commandPrefix = 'sc'
@@ -118,8 +115,15 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: false,
+    enableConfig: 'ImageShortcut.Enabled',
     matches: [
         /^\/sc(.*)/
+    ],
+    descriptions: [
+        'sclist - print image shortcut list',
+        'scadd - add image shortcut',
+        'scedit - add image shortcut',
+        'scdelete - remove image shortcut',
     ],
     handler
 }

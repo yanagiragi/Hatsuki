@@ -5,10 +5,6 @@ const previousMessages = {}
 const maxPreviousMessagesLength = 4
 
 async function handler (msg, match, config, bot) {
-    if (!config['ImageShortcut.Enabled']) {
-        return
-    }
-
     const processedMsg = PreprocessShortcutMessage(msg.text)
 
     // if current message is a link, don't add it into previous messages
@@ -59,6 +55,7 @@ function RecordPreviousMessages (chatId, content) {
 
 module.exports = {
     isAdminCommand: false,
+    enableConfig: 'ImageShortcut.Enabled',
     matches: [
         /^(?!\/)(.*)/
     ],

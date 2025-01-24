@@ -25,5 +25,6 @@ module.exports = {
     matches: [
         /^\/getbase64/
     ],
+    descriptions: ['getbase64 - Get base64 of an image'],
     handler
 }

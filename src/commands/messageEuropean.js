@@ -1,10 +1,6 @@
 const key = 'europeanId'
 
 async function handler (msg, match, config, bot) {
-    if (!config['EuropeanMode.Enabled']) {
-        return
-    }
-
     const europeanId = bot.GetBlackboard(key)
     if (europeanId != null && msg.from.id === europeanId) {
         // reply `too low favorability` sticker
@@ -14,6 +10,7 @@ async function handler (msg, match, config, bot) {
 
 module.exports = {
     isAdminCommand: false,
+    enableConfig: 'EuropeanMode.Enabled',
     event: 'message',
     matches: [],
     handler
