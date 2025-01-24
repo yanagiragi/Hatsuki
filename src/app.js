@@ -68,7 +68,8 @@ const commands = loadCommands(bot, [
     'ytdl',
     'ytdlmp3',
     'aria2',
-    'aria2ls'
+    'aria2ls',
+    'goImage'
 ], config)
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
