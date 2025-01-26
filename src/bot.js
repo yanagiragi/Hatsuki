@@ -18,18 +18,18 @@ class Bot {
         return this.bot.onText(regExp, callback)
     }
 
-    SendMessage (msg, content) {
+    SendMessage (msg, content, option) {
         try {
-            return this.bot.sendMessage(msg.chat.id, content)
+            return this.bot.sendMessage(msg.chat.id, content, option)
         }
         catch (err) {
             console.trace(`SendMessage: ${err}`)
         }
     }
 
-    ReplyMessage (msg, content) {
+    ReplyMessage (msg, content, option) {
         try {
-            return this.bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id })
+            return this.bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id, ...option })
         }
         catch (err) {
             console.trace(`ReplyMessage: ${err}`)
