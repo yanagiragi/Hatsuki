@@ -61,11 +61,12 @@ typings/
 .next
 
 config.json
+config_*.json
 
 src/Plugins/Subscriptions/data.json
 src/Plugins/Subscriptions/container.json
 src/Plugins/Subscriptions/Subscriptions
-
 src/Plugins/ImageShortcut/data.json
-config_*.json
 src/Plugins/IdMetadata/data.json
+src/Plugins/ChannelAlias/data.json
+src/Plugins/EnableFeature/data.json
