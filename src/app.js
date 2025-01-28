@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const TelegramBot = require('./bot')
+const { HasFeatureEnabled } = require('./Plugins/EnableFeature')
 
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
@@ -25,6 +26,11 @@ function loadCommands (bot, commands, config) {
             const fromId = msg.from.id
             if ((isDev || isAdminCommand) && fromId !== config['Bot.Administrator']) {
                 console.log(`Skip message from ${fromId} since it is not an administrator`)
+                return
+            }
+
+            if (enableConfig && !HasFeatureEnabled(enableConfig, msg.chat.id)) {
+                console.log(`Skip message from ${msg.chat.id} since the feature [${enableConfig}] is not enabled in this channel`)
                 return
             }
 
@@ -70,7 +76,9 @@ const commands = loadCommands(bot, [
     'aria2',
     'aria2ls',
     'goImage',
-    'ytdlls'
+    'ytdlls',
+    'enableFeature',
+    'disableFeature'
 ], config)
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
