@@ -16,5 +16,6 @@ module.exports = {
     matches: [
         /^\/setid (.*) (.*)/
     ],
+    enableConfig: 'Id.Enabled',
     handler
 }

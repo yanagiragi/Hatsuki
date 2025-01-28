@@ -14,6 +14,7 @@ module.exports = {
     matches: [
         /^\/start/
     ],
+    enableConfig: 'Start.Enabled',
     descriptions: ['start - Greeting from the bot'],
     handler
 }

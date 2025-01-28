@@ -12,6 +12,7 @@ module.exports = {
     matches: [
         /^\/feature disable (.*)/
     ],
+    enableConfig: 'Feature.Enabled',
     descriptions: ['feature - Enable or disable the feature of the channel'],
     handler
 }

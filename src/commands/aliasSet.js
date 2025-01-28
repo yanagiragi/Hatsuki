@@ -13,6 +13,7 @@ module.exports = {
     matches: [
         /^\/alias set (.*) (.*)/
     ],
+    enableConfig: 'Alias.Enabled',
     descriptions: ['alias - Get or set an alias'],
     handler
 }

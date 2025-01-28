@@ -4,13 +4,22 @@ const path = require('path')
 const dataPath = path.join(__dirname, './data.json')
 const data = fs.existsSync(dataPath) ? JSON.parse(fs.readFileSync(dataPath)) : {}
 
+const AllFeatures = 'AllFeatures'
+
 function HasFeatureEnabled (feature, channel) {
-    return data[feature] && data[feature].includes(channel)
+    const case1 = data[AllFeatures] && data[AllFeatures].includes(channel)
+    const case2 = data[feature] && data[feature].includes(channel)
+    return case1 || case2
 }
 
 function UpdateFeature (feature, channel, isEnabled) {
+    if (feature === AllFeatures) {
+        return 'Prohibited feature. Please manually add it in the config'
+    }
+
     let shouldSave = false
     let result = ''
+
     if (isEnabled) {
         const isExist = data[feature] && data[feature].indexOf(channel) > -1
         if (isExist) {

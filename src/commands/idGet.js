@@ -10,5 +10,6 @@ module.exports = {
     matches: [
         /^\/getid/
     ],
+    enableConfig: 'Id.Enabled',
     handler
 }

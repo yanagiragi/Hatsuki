@@ -7,5 +7,6 @@ module.exports = {
     matches: [
         /^\/stat/
     ],
+    enableConfig: 'Stat.Enabled',
     handler
 }

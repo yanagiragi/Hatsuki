@@ -25,6 +25,7 @@ module.exports = {
     matches: [
         /^\/getbase64/
     ],
+    enableConfig: 'GetBase64.Enabled',
     descriptions: ['getbase64 - Get base64 of an image'],
     handler
 }
