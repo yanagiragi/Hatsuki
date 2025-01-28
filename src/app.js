@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const TelegramBot = require('./bot')
 const { HasFeatureEnabled } = require('./Plugins/EnableFeature')
+const { GetChannelAlias } = require('./Plugins/ChannelAlias')
 
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
@@ -22,20 +23,19 @@ function loadCommands (bot, commands, config, whitelist) {
         }
 
         const callback = async (msg, match) => {
-            const chatId = msg.chat.id
+            const chatId = msg.chat.id // use original chat id for permission check
             if (!config['Bot.ChatIdList']?.find(x => x.chatId === chatId)) {
                 console.log(`Skip message from [${chatId}][${msg.chat.title}] since it is not a allowed chat`)
+                return
+            }
+            else if (enableConfig && !HasFeatureEnabled(enableConfig, chatId)) {
+                console.log(`Skip message from ${chatId} since the feature [${enableConfig}] is not enabled in this channel`)
                 return
             }
 
             const fromId = msg.from.id
             if ((isDev || isAdminCommand) && fromId !== config['Bot.Administrator']) {
                 console.log(`Skip message from ${fromId} since it is not an administrator`)
-                return
-            }
-
-            if (enableConfig && !HasFeatureEnabled(enableConfig, msg.chat.id)) {
-                console.log(`Skip message from ${msg.chat.id} since the feature [${enableConfig}] is not enabled in this channel`)
                 return
             }
 
@@ -83,7 +83,8 @@ const commands = loadCommands(bot, [
     'goImage',
     'ytdlls',
     'enableFeature',
-    'disableFeature'
+    'disableFeature',
+    'getEnabledFeature'
 ], config, ['messageRecordNewId'])
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {

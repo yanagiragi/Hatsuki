@@ -12,6 +12,20 @@ function HasFeatureEnabled (feature, channel) {
     return case1 || case2
 }
 
+function GetEnabledFeature (channel) {
+    if (data[AllFeatures].includes(channel)) {
+        return AllFeatures
+    }
+    const result = []
+    for (const key in data) {
+        if (data[key].includes(channel)) {
+            result.push(key)
+        }
+    }
+
+    return result.join(', ')
+}
+
 function UpdateFeature (feature, channel, isEnabled) {
     if (feature === AllFeatures) {
         return 'Prohibited feature. Please manually add it in the config'
@@ -59,5 +73,6 @@ function UpdateFeature (feature, channel, isEnabled) {
 
 module.exports = {
     UpdateFeature,
-    HasFeatureEnabled
+    HasFeatureEnabled,
+    GetEnabledFeature
 }

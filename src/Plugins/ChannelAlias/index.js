@@ -16,11 +16,11 @@ function GetChannelAlias (chatId) {
 
 function SetChannelAlias (chatId, target) {
     if (chatId in data) {
-        return false
+        data[chatId] = parseInt(target)
+        fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
+        return true
     }
-    data[chatId] = parseInt(target)
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
-    return true
+    return false
 }
 
 module.exports = { GetChannelAlias, SetChannelAlias }
