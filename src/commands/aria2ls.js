@@ -25,6 +25,6 @@ module.exports = {
     matches: [
         /^\/aria2ls/
     ],
-    descriptions: ['aris2ls - List aria2 active donwloads'],
+    descriptions: ['aria2ls - List aria2 active donwloads'],
     handler
 }
