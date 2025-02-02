@@ -84,7 +84,8 @@ const commands = loadCommands(bot, [
     'ytdlls',
     'enableFeature',
     'disableFeature',
-    'getEnabledFeature'
+    'getEnabledFeature',
+    'megals'
 ], config, ['messageRecordNewId'])
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
