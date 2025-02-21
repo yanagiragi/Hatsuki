@@ -14,6 +14,6 @@ module.exports = {
         /^\/feature enable (.*)/
     ],
     enableConfig: 'Feature.Enabled',
-    descriptions: ['feature - enable/disable/list the feature of the channel'],
+    descriptions: ['feature - Enable/Disable/List the feature of the channel'],
     handler
 }
