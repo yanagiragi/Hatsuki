@@ -1,5 +1,5 @@
 async function handler (msg, match, config, bot) {
-    const title = 'Bello, My Name is Hatsuki'
+    const title = config['Start.WelcomeMessage'] || 'Bello, My Name is Hatsuki'
     const thumbnail = config['Start.WelcomeImage']
     if (thumbnail) {
         return bot.ReplyPhoto(msg, thumbnail, title)
