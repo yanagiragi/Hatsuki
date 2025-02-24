@@ -45,9 +45,9 @@ class Bot {
         }
     }
 
-    ReplyPhoto (msg, fileId, caption = null) {
+    ReplyPhoto (msg, fileId, caption = null, fileOptions = {}) {
         try {
-            return this.bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption })
+            return this.bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption }, fileOptions)
         }
         catch (err) {
             console.trace(`ReplyPhoto: ${err}`)

@@ -70,3 +70,5 @@ src/Plugins/ImageShortcut/data.json
 src/Plugins/IdMetadata/data.json
 src/Plugins/ChannelAlias/data.json
 src/Plugins/EnableFeature/data.json
+src/Plugins/MeowMeowImage/Storage/*/*.png
+src/Plugins/MeowMeowImage/Storage/fileId.json
