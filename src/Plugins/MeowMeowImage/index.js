@@ -33,9 +33,7 @@ function Sanitize (text) {
 }
 
 function GetImage (message) {
-    const firstMatch = data.find(x => {
-        return Sanitize(x.text) === Sanitize(message)
-    })
+    const firstMatch = data.find(x => x.text && message && Sanitize(x.text) === Sanitize(message))
     if (!firstMatch) {
         return null
     }
