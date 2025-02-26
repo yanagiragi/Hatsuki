@@ -109,7 +109,16 @@ async function handler (msg, match, config, bot) {
         send(msg, matchShortCut.result.value)
     }
     else {
-        await bot.ReplyMessage(msg, matchShortCut.message)
+        if (matchShortCut.message.length > 4096) {
+            const chunkSize = 100
+            for (let i = 0; i < matchShortCut.raw.length; i += chunkSize) {
+                const chunk = matchShortCut.raw.slice(i, i + chunkSize)
+                await bot.ReplyMessage(msg, `Available options (${i + 1}/${matchShortCut.raw.length}) are:\n${JSON.stringify(chunk, null, 4)}`)
+            }
+        }
+        else {
+            await bot.ReplyMessage(msg, matchShortCut.message)
+        }
     }
 }
 

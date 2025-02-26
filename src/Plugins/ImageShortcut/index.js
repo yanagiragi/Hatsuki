@@ -163,7 +163,8 @@ async function ImageShortcut (chatId, option) {
             .sort()
         return {
             isOK: false,
-            message: `Available options are:\n${JSON.stringify(shortcuts, null, 4)}`
+            message: `Available options are:\n${JSON.stringify(shortcuts, null, 4)}`,
+            raw: shortcuts
         }
     }
 
