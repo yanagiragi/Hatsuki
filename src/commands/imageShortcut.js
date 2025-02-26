@@ -1,6 +1,6 @@
+const { Sample } = require('../utils')
 const { GetChannelAlias } = require('../Plugins/ChannelAlias')
 const ImageShortcut = require('../Plugins/ImageShortcut')
-const { descriptions } = require('./aliasGet')
 
 async function handler (msg, match, config, bot) {
     const chatId = msg.chat.id
@@ -100,13 +100,19 @@ async function handler (msg, match, config, bot) {
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
-        const send = ({
-            sticker: bot.ReplySticker,
-            url: bot.ReplyPhoto,
-            photo: bot.ReplyPhoto,
-            animation: bot.ReplyAnimation
-        })[matchShortCut.result.type]
-        send(msg, matchShortCut.result.value)
+        const result = Sample(matchShortCut.result)
+        if (result.type === 'sticker') {
+            await bot.ReplySticker(msg, result.value)
+        }
+        else if (result.type === 'url') {
+            await bot.ReplyPhoto(msg, result.value)
+        }
+        else if (result.type === 'photo') {
+            await bot.ReplyPhoto(msg, result.value)
+        }
+        else if (result.type === 'animation') {
+            await bot.ReplyAnimation(msg, result.value)
+        }
     }
     else {
         if (matchShortCut.message.length > 4096) {

@@ -28,10 +28,10 @@ const GetType = (raw) => {
     }
 }
 
-function Match (shortcutConfig, key, chatId) {
+function Match (shortcutConfig, key) {
     // don't match link with regexs
     if (key != null && (key.startsWith('https://') || key.startsWith('base64://'))) {
-        return shortcutConfig.shortcut === key && shortcutConfig.chatId === chatId
+        return shortcutConfig.shortcut === key
     }
 
     if (shortcutConfig.shortcut.startsWith(regexStartPattern)) {
@@ -39,7 +39,7 @@ function Match (shortcutConfig, key, chatId) {
         try {
             const regex = new RegExp(rawRegex)
             const match = key.toString().match(regex)
-            const hasMatched = match !== null && shortcutConfig.chatId === chatId
+            const hasMatched = match !== null
 
             if (hasMatched) {
                 console.log(`detect regex match = ${rawRegex}, key = ${key}, match = ${match?.[1]}`)
@@ -56,24 +56,25 @@ function Match (shortcutConfig, key, chatId) {
         }
     }
 
-    return PlainMatch(shortcutConfig, key, chatId)
+    return PlainMatch(shortcutConfig, key)
 }
 
-function PlainMatch (shortcutConfig, key, chatId) {
-    return shortcutConfig.shortcut === key && shortcutConfig.chatId === chatId
+function PlainMatch (shortcutConfig, key) {
+    return shortcutConfig.shortcut === key
 }
 
 // Supported modes: [ post, add, edit, delete/remove, list ]
 async function ImageShortcut (chatId, option) {
     const matchFunc = option.mode === 'post' ? Match : PlainMatch
-    const match = data.filter(x => matchFunc(x, option.key, chatId))?.[0]
+    const match = data.find(x => matchFunc(x, option.key))
+    const result = match?.values?.filter(x => x.chatId === chatId)
 
     if (option.mode === 'post') {
         if (match) {
             return {
                 isOK: true,
                 message: 'success',
-                result: match
+                result
             }
         }
         else {
@@ -85,28 +86,26 @@ async function ImageShortcut (chatId, option) {
     }
 
     else if (option.mode === 'add') {
-        if (match) {
+        /*if (match && result && result.length > 0) {
             return {
                 isOK: false,
                 message: `Unable to set an exist key [${option.key}]`
             }
-        }
+        }*/
 
         // special treat webp links
-        if (option.value.endsWith('.webp')) {
-            data.push({
-                chatId,
-                shortcut: option.key,
-                value: option.value,
-                type: 'sticker'
-            })
+        const entry = {
+            chatId,
+            value: option.value,
+            type: option.value.endsWith('.webp') ? 'sticker' : option.type
+        }
+        if (match) {
+            match.values.push(entry)
         }
         else {
             data.push({
-                chatId,
                 shortcut: option.key,
-                value: option.value,
-                type: option.type
+                values: [entry]
             })
         }
 
@@ -126,8 +125,15 @@ async function ImageShortcut (chatId, option) {
             }
         }
 
-        match.value = option.value
-        match.type = option(match.value)
+        if (match.values.length > 1) {
+            return {
+                isOK: false,
+                message: `Unable to edit exist key [${option.key}] that has multiple images`
+            }
+        }
+
+        match.values[0].value = option.value
+        match.values[0].type = option(match.value)
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
 
         return {
@@ -141,6 +147,13 @@ async function ImageShortcut (chatId, option) {
             return {
                 isOK: false,
                 message: `Unable to found an exist key [${option.key}] to delete`
+            }
+        }
+
+        if (match.values.length > 1) {
+            return {
+                isOK: false,
+                message: `Unable to delete exist key [${option.key}] that has multiple images`
             }
         }
 
@@ -158,7 +171,11 @@ async function ImageShortcut (chatId, option) {
 
     else if (option.mode === 'list') {
         const shortcuts = data
-            .filter(x => x.chatId === chatId)
+            .map(x => ({
+                shortcut: x.shortcut,
+                values: x.values.filter(y => y.chatId === chatId)
+            }))
+            .filter(x => x.values.length > 0)
             .map(x => x.shortcut)
             .sort()
         return {

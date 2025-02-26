@@ -110,6 +110,10 @@ function FormatFileSize (bytes, decimalPoint) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
+function Sample (arr) {
+    return arr[Math.floor(Math.random() * arr.length)]
+}
+
 module.exports = {
-    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize
+    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample
 }

@@ -1,4 +1,4 @@
-const { ToCDB } = require('../utils')
+const { ToCDB, Sample } = require('../utils')
 
 const { GetChannelAlias } = require('../Plugins/ChannelAlias')
 const ImageShortcut = require('../Plugins/ImageShortcut')
@@ -14,17 +14,18 @@ async function HandleShortcut (msg, matchedContent, config, bot) {
     console.log(`> Bot responses [${JSON.stringify(matchShortCut)}]`)
 
     if (matchShortCut.isOK && matchShortCut.result) {
-        if (matchShortCut.result.type === 'sticker') {
-            await bot.ReplySticker(msg, matchShortCut.result.value)
+        const result = Sample(matchShortCut.result)
+        if (result.type === 'sticker') {
+            await bot.ReplySticker(msg, result.value)
         }
-        else if (matchShortCut.result.type === 'url') {
-            await bot.ReplyPhoto(msg, matchShortCut.result.value)
+        else if (result.type === 'url') {
+            await bot.ReplyPhoto(msg, result.value)
         }
-        else if (matchShortCut.result.type === 'photo') {
-            await bot.ReplyPhoto(msg, matchShortCut.result.value)
+        else if (result.type === 'photo') {
+            await bot.ReplyPhoto(msg, result.value)
         }
-        else if (matchShortCut.result.type === 'animation') {
-            await bot.ReplyAnimation(msg, matchShortCut.result.value)
+        else if (result.type === 'animation') {
+            await bot.ReplyAnimation(msg, result.value)
         }
 
         if (config['ImageShortcut.Report.Enabled']) {
@@ -32,7 +33,7 @@ async function HandleShortcut (msg, matchedContent, config, bot) {
                 chat: {
                     id: config['ImageShortcut.Report.ChatId']
                 }
-            }, `matchedContent = ${matchedContent}, result = ${JSON.stringify(matchShortCut.result)}`)
+            }, `matchedContent = ${matchedContent}, result = ${JSON.stringify(result)}`)
         }
 
         return true
