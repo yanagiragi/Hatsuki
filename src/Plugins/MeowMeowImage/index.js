@@ -29,7 +29,9 @@ function Load () {
 }
 
 function Sanitize (text) {
-    return text.replace(/[!?)( 「」。.]/g, '')
+    return text
+        .replace(/[!?)( 「」。.]/g, '')
+        .replace(/阿/g, '啊')
 }
 
 function GetImage (message) {
