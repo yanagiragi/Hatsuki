@@ -9,6 +9,7 @@
     "csv": "^6.3.11",
     "node-fetch": "^2.7.0",
     "node-telegram-bot-api": "github:yagop/node-telegram-bot-api",
+    "string-similarity-js": "^2.1.4",
     "TwitterPictureDownloader": "github:yanagiragi/Twitter-Downloader"
   },
   "devDependencies": {

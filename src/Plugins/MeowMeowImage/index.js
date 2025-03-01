@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { text } = require('stream/consumers')
+const { stringSimilarity } = require('string-similarity-js')
 
 const searchDir = path.join(__dirname, 'Storage')
 const data = fs.existsSync(searchDir) ? Load() : []
@@ -53,7 +53,18 @@ function SetFileId (id, fileId) {
     fs.writeFileSync(fileIdCachePath, JSON.stringify(fileIdCache, null, 4))
 }
 
+function Search (text, threshold) {
+    return data
+        .map(x => ({
+            id: x.id,
+            text: x.text,
+            similarity: stringSimilarity(Sanitize(x.text), Sanitize(text))
+        }))
+        .filter(x => x.similarity > threshold)
+}
+
 module.exports = {
+    Search,
     GetImage,
     SetFileId
 }
