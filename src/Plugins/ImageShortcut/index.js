@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const regexStartPattern = 'r/'
+const indexEndPattern = '##'
 
 const dataPath = path.join(__dirname, '/data.json')
 
@@ -25,6 +26,35 @@ const GetType = (raw) => {
     }
     else {
         return 'sticker'
+    }
+}
+
+function GetSpecificMatchResult (key) {
+    if (!key) {
+        return {
+            matchKey: '',
+            index: NaN
+        }
+    }
+    const reversed = key.split('').reverse()
+    const indices = []
+    let i = 0
+    for (i = 0; i < reversed.length; ++i) {
+        const char = reversed[i]
+        if (char >= '0' && char <= '9') {
+            indices.push(char)
+        }
+        else {
+            break
+        }
+    }
+
+    const index = parseInt(indices.reverse().join(''))
+    const matchKey = reversed.slice(i + indexEndPattern.length, reversed.length).reverse().join('')
+
+    return {
+        matchKey,
+        index
     }
 }
 
@@ -66,11 +96,14 @@ function PlainMatch (shortcutConfig, key) {
 // Supported modes: [ post, add, edit, delete/remove, list ]
 async function ImageShortcut (chatId, option) {
     const matchFunc = option.mode === 'post' ? Match : PlainMatch
-    const match = data.find(x => matchFunc(x, option.key))
-    const result = match?.values?.filter(x => x.chatId === chatId)
+    const specificMatchResult = GetSpecificMatchResult(option.key)
+    const matchKey = isNaN(specificMatchResult.index) ? option.key : specificMatchResult.matchKey
+    const match = data.find(x => matchFunc(x, matchKey))
+    const matchedResults = match?.values?.filter(x => x.chatId === chatId)
+    const result = isNaN(specificMatchResult.index) ? matchedResults : [matchedResults?.[specificMatchResult.index]].filter(Boolean)
 
     if (option.mode === 'post') {
-        if (match) {
+        if (match && result.length > 0) {
             return {
                 isOK: true,
                 message: 'success',
@@ -86,12 +119,12 @@ async function ImageShortcut (chatId, option) {
     }
 
     else if (option.mode === 'add') {
-        /*if (match && result && result.length > 0) {
+        if (option.key.includes(indexEndPattern)) {
             return {
                 isOK: false,
-                message: `Unable to set an exist key [${option.key}]`
+                message: `Unable to add shortcut using the key [${option.key}] with special pattern`
             }
-        }*/
+        }
 
         // special treat webp links
         const entry = {
@@ -150,18 +183,54 @@ async function ImageShortcut (chatId, option) {
             }
         }
 
-        if (match.values.length > 1) {
+        if (match.values.length > 1 && result.length !== 1) {
             return {
                 isOK: false,
                 message: `Unable to delete exist key [${option.key}] that has multiple images`
             }
         }
 
-        const indexToRemove = data.indexOf(match)
-        if (indexToRemove !== -1) {
-            data.splice(indexToRemove, 1)
+        const indexToRemoveMatch = data.indexOf(match)
+        if (match.values.length > 1) {
+            if (indexToRemoveMatch !== -1) {
+                const indexToRemoveResult = data[indexToRemoveMatch].values.indexOf(result[0])
+                if (indexToRemoveResult !== -1) {
+                    data[indexToRemoveMatch].values.splice(indexToRemoveResult, 1)
+                    fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
+                }
+                else {
+                    return {
+                        isOK: false,
+                        message: `Unable to find valid index in values of [${option.key}]`
+                    }
+                }
+            }
+            else {
+                return {
+                    isOK: false,
+                    message: `Unable to find valid index in data of [${option.key}]`
+                }
+            }
         }
-        fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
+        else {
+            if (!isNaN(specificMatchResult.index) && specificMatchResult.index !== 0) {
+                return {
+                    isOK: false,
+                    message: `Unable to find valid index in data of [${option.key}]`
+                }
+            }
+
+            if (indexToRemoveMatch !== -1) {
+                data.splice(indexToRemoveMatch, 1)
+                fs.writeFileSync(dataPath, JSON.stringify(data, null, 4))
+            }
+            else {
+                return {
+                    isOK: false,
+                    message: `Unable to find valid index in data of [${option.key}]`
+                }
+            }
+        }
 
         return {
             isOK: true,
