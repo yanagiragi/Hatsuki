@@ -53,14 +53,15 @@ function SetFileId (id, fileId) {
     fs.writeFileSync(fileIdCachePath, JSON.stringify(fileIdCache, null, 4))
 }
 
-function Search (text, threshold) {
+function Search (text, takeAmount) {
     return data
         .map(x => ({
             id: x.id,
             text: x.text,
-            similarity: stringSimilarity(Sanitize(x.text), Sanitize(text))
+            similarity: stringSimilarity(Sanitize(x.text), Sanitize(text)).toFixed(2)
         }))
-        .filter(x => x.similarity > threshold)
+        .sort((a, b) => b.similarity - a.similarity)
+        .splice(0, takeAmount)
 }
 
 module.exports = {

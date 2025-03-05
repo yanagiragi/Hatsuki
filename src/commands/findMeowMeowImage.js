@@ -7,8 +7,8 @@ async function handler (msg, match, config, bot) {
         return
     }
 
-    const threshold = config['FindMeowMeowImage.Threshold']
-    const matches = Search(text, threshold)
+    const takeAmount = config?.['FindMeowMeowImage.TakeAmount'] ?? 5
+    const matches = Search(text, takeAmount)
     return bot.ReplyMessage(msg, JSON.stringify(matches, null, 4))
 }
 
