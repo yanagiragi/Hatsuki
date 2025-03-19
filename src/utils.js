@@ -115,6 +115,9 @@ function Sample (arr) {
 }
 
 function SanitizeShortcut (text) {
+	if (!text) {
+		return
+	}
     return text
         .replace(/[!?)( 「」。.：:]/g, '')
         .replace(/阿/g, '啊')
