@@ -1,13 +1,14 @@
 const csv = require('csv-parse/sync')
 const fs = require('fs')
 const path = require('path')
+const { SanitizeShortcut } = require('../../utils')
 
 const dataPath = path.join(__dirname, '/data.csv')
 const dataContent = fs.readFileSync(dataPath)
 const data = csv.parse(dataContent)
 
 function GetImage (message) {
-    const firstMatch = data.find(x => x[2] === message)
+    const firstMatch = data.find(x => SanitizeShortcut(x[2]) === SanitizeShortcut(message))
     if (!firstMatch) {
         return null
     }

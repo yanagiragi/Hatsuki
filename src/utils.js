@@ -114,6 +114,13 @@ function Sample (arr) {
     return arr[Math.floor(Math.random() * arr.length)]
 }
 
+function SanitizeShortcut (text) {
+    return text
+        .replace(/[!?)( 「」。.]/g, '')
+        .replace(/阿/g, '啊')
+}
+
+
 module.exports = {
-    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample
+    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample, SanitizeShortcut
 }

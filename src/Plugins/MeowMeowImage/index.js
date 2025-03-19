@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const { SanitizeShortcut } = require('../../utils')
 const { stringSimilarity } = require('string-similarity-js')
 
 const searchDir = path.join(__dirname, 'Storage')
@@ -28,14 +29,8 @@ function Load () {
     return result
 }
 
-function Sanitize (text) {
-    return text
-        .replace(/[!?)( 「」。.]/g, '')
-        .replace(/阿/g, '啊')
-}
-
 function GetImage (message) {
-    const firstMatch = data.find(x => x.text && message && Sanitize(x.text) === Sanitize(message))
+    const firstMatch = data.find(x => x.text && message && SanitizeShortcut(x.text) === SanitizeShortcut(message))
     if (!firstMatch) {
         return null
     }
@@ -58,7 +53,7 @@ function Search (text, takeAmount) {
         .map(x => ({
             id: x.id,
             text: x.text,
-            similarity: stringSimilarity(Sanitize(x.text), Sanitize(text)).toFixed(2)
+            similarity: stringSimilarity(SanitizeShortcut(x.text), SanitizeShortcut(text)).toFixed(2)
         }))
         .sort((a, b) => b.similarity - a.similarity)
         .splice(0, takeAmount)
