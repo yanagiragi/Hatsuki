@@ -116,10 +116,9 @@ function Sample (arr) {
 
 function SanitizeShortcut (text) {
     return text
-        .replace(/[!?)( 「」。.]/g, '')
+        .replace(/[!?)( 「」。.：:]/g, '')
         .replace(/阿/g, '啊')
 }
-
 
 module.exports = {
     RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample, SanitizeShortcut
