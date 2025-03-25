@@ -11,6 +11,7 @@ module.exports = {
     matches: [
         /^\/send ([a-zA-Z0-9]+) (.*)/
     ],
+    descriptions: ['send - Send a message to specific channel'],
     enableConfig: 'SendMessage.Enabled',
     handler
 }

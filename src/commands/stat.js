@@ -7,6 +7,7 @@ module.exports = {
     matches: [
         /^\/stat/
     ],
+    descriptions: ['stat - List status of the channel'],
     enableConfig: 'Stat.Enabled',
     handler
 }
