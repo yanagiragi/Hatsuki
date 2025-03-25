@@ -87,7 +87,8 @@ const commands = loadCommands(bot, [
     'getEnabledFeature',
     'megals',
     'meowMeowImage',
-    'findMeowMeowImage'
+    'findMeowMeowImage',
+    'sendMessage'
 ], config, ['messageRecordNewId'])
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
