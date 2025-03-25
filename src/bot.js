@@ -10,120 +10,118 @@ class Bot {
         })
     }
 
-    on (event, listener) {
+    On (event, listener) {
         return this.bot.on(event, listener)
     }
 
-    onText (regExp, callback) {
+    OnText (regExp, callback) {
         return this.bot.onText(regExp, callback)
     }
 
-    SendMessage (msg, content, option) {
+    async SendMessage (msg, content, option) {
         try {
-            return this.bot.sendMessage(msg.chat.id, content, option)
+            const result = await this.bot.sendMessage(msg.chat.id, content, option)
+            return result
         }
         catch (err) {
             console.trace(`SendMessage: ${err}`)
         }
     }
 
-    ReplyMessage (msg, content, option) {
+    async ReplyMessage (msg, content, option) {
         try {
-            return this.bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id, ...option })
+            const result = await this.bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id, ...option })
+            return result
         }
         catch (err) {
             console.trace(`ReplyMessage: ${err}`)
         }
     }
 
-    SendPhoto (msg, fileId, caption = null) {
+    async SendPhoto (msg, fileId, caption = null) {
         try {
-            return this.bot.sendPhoto(msg.chat.id, fileId, { caption })
+            const result = await this.bot.sendPhoto(msg.chat.id, fileId, { caption })
+            return result
         }
         catch (err) {
             console.trace(`SendPhoto: ${err}`)
         }
     }
 
-    ReplyPhoto (msg, fileId, caption = null, fileOptions = {}) {
+    async ReplyPhoto (msg, fileId, caption = null, fileOptions = {}) {
         try {
-            return this.bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption }, fileOptions)
+            const result = await this.bot.sendPhoto(msg.chat.id, fileId, { reply_to_message_id: msg.message_id, caption }, fileOptions)
+            return result
         }
         catch (err) {
             console.trace(`ReplyPhoto: ${err}`)
         }
     }
 
-    SendSticker (msg, fileId) {
+    async SendSticker (msg, fileId) {
         try {
-            return this.bot.sendSticker(msg.chat.id, fileId)
+            const result = await this.bot.sendSticker(msg.chat.id, fileId)
+            return result
         }
         catch (err) {
             console.trace(`SendSticker: ${err}`)
         }
     }
 
-    ReplySticker (msg, fileId) {
+    async ReplySticker (msg, fileId) {
         try {
-            return this.bot.sendSticker(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
+            const result = await this.bot.sendSticker(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
+            return result
         }
         catch (err) {
             console.trace(`ReplySticker: ${err}`)
         }
     }
 
-    /**
-    * Wrapper of sendMediaGroup
-    * @param {*} msg telegram native passed object
-    * @param {*} photos photo metadata with { file_id, caption } format
-    * @returns awaitable sendMediaGroup calls
-    */
-    SendMediaGroup (msg, photos) {
+    async SendMediaGroup (msg, photos) {
         try {
             const media = photos.map(x => ({
                 type: 'photo',
                 media: x.file_id,
                 caption: x.caption
             }))
-            return this.bot.sendMediaGroup(msg.chat.id, media)
+            const result = await this.bot.sendMediaGroup(msg.chat.id, media)
+            return result
         }
         catch (err) {
             console.trace(`SendMediaGroup: ${err}`)
         }
     }
 
-    /**
-    * Wrapper of sendMediaGroup
-    * @param {*} msg telegram native passed object
-    * @param {*} photos photo metadata with { file_id, caption } format
-    * @returns awaitable sendMediaGroup calls
-    */
-    ReplyMediaGroup (msg, photos) {
+    async ReplyMediaGroup (msg, photos) {
         try {
             const media = photos.map(x => ({
                 type: 'photo',
                 media: x.file_id,
                 caption: x.caption
             }))
-            return this.bot.sendMediaGroup(msg.chat.id, media, { reply_to_message_id: msg.message_id })
+            const result = await this.bot.sendMediaGroup(msg.chat.id, media, { reply_to_message_id: msg.message_id })
+            return result
         }
         catch (err) {
             console.trace(`ReplyMediaGroup: ${err}`)
         }
     }
 
-    ReplyAnimation (msg, fileId) {
+    async ReplyAnimation (msg, fileId) {
         try {
-            return this.bot.sendAnimation(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
+            const result = await this.bot.sendAnimation(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
+            return result
         }
         catch (err) {
             console.trace(`ReplyAnimation: ${err}`)
         }
     }
 
-    SendAnimation (msg, fileId) {
+    async SendAnimation (msg, fileId) {
         try {
-            return this.bot.sendAnimation(msg.chat.id, fileId)
+            const result = await this.bot.sendAnimation(msg.chat.id, fileId)
+            return result
         }
         catch (err) {
             console.trace(`SendAnimation: ${err}`)
@@ -137,7 +135,8 @@ class Bot {
             const arrayBuffer = await response.arrayBuffer()
             const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
             return base64String.substring(0, 256) + base64String.substring(base64String.length - 256, base64String.length)
-        } catch (err) {
+        }
+        catch (err) {
             console.trace(`Detect error when convert ${fileId} to base64, Raw err = ${err.message}`)
             return null
         }

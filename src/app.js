@@ -39,14 +39,15 @@ function loadCommands (bot, commands, config, whitelist) {
                 return
             }
 
-            handler(msg, match, config, bot)
+            const result = await handler(msg, match, config, bot)
+            // console.log(result)
         }
         if (event != null) {
-            bot.on(event, callback)
+            bot.On(event, callback)
         }
         else {
             for (const match of matches) {
-                bot.onText(match, callback)
+                bot.OnText(match, callback)
             }
         }
 
@@ -94,6 +95,6 @@ const commands = loadCommands(bot, [
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
     return `${acc}\n${ele}`
 }, 'lscmd - List avabilable commands').trim()
-bot.onText(/\/lscmd/, async (msg) => bot.ReplyMessage(msg, commandsInString))
+bot.OnText(/\/lscmd/, async (msg) => bot.ReplyMessage(msg, commandsInString))
 
 console.log(`bot is ready, avabilable commands =\n[\n${commandsInString.split('\n').map(x => `    ${x}`).join('\n')}\n]`)
