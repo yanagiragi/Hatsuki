@@ -89,7 +89,8 @@ const commands = loadCommands(bot, [
     'megals',
     'meowMeowImage',
     'findMeowMeowImage',
-    'sendMessage'
+    'sendMessage',
+    'ytdltext'
 ], config, ['messageRecordNewId'])
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
