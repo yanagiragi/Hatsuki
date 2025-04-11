@@ -12,5 +12,6 @@ module.exports = {
     enableConfig: 'MujicaImage.Enabled',
     event: 'message',
     matches: [],
-    handler
+    handler,
+    priority: 102
 }

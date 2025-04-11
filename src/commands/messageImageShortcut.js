@@ -29,5 +29,6 @@ module.exports = {
     enableConfig: 'ImageShortcut.Enabled',
     event: 'message',
     matches: [],
-    handler
+    handler,
+    priority: 100
 }

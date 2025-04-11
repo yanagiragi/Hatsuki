@@ -12,5 +12,6 @@ module.exports = {
     enableConfig: 'MyGoImage.Enabled',
     event: 'message',
     matches: [],
-    handler
+    handler,
+    priority: 101
 }
