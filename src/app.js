@@ -2,7 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const TelegramBot = require('./bot')
 const { HasFeatureEnabled } = require('./Plugins/EnableFeature')
-const { GetChannelAlias } = require('./Plugins/ChannelAlias')
 
 const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
@@ -10,8 +9,9 @@ const isDev = config?.IsDev ?? true
 
 function loadCommands (bot, commands, config, whitelist) {
     const availableCommands = []
+    const onCallbacks = {}
     for (const command of commands) {
-        const { isAdminCommand, event, matches, handler, enableConfig, descriptions } = require(`./commands/${command}.js`)
+        const { isAdminCommand, event, matches, handler, enableConfig, descriptions, priority } = require(`./commands/${command}.js`)
         if (enableConfig && !config[enableConfig]) {
             // console.log(`Skip message from [${chatId}][${match?.[0]}] since it is not a allowed command`)
             continue
@@ -40,10 +40,20 @@ function loadCommands (bot, commands, config, whitelist) {
             }
 
             const result = await handler(msg, match, config, bot)
-            // console.log(result)
+            return result
         }
+
         if (event != null) {
-            bot.On(event, callback)
+            const arg = {
+                priority: priority ?? 50, // default value: 50
+                callback
+            }
+            if (event in onCallbacks) {
+                onCallbacks[event].push(arg)
+            }
+            else {
+                onCallbacks[event] = [arg]
+            }
         }
         else {
             for (const match of matches) {
@@ -54,6 +64,29 @@ function loadCommands (bot, commands, config, whitelist) {
         if (descriptions) {
             availableCommands.push({ command, descriptions })
         }
+    }
+
+    // Handle onEvent callbacks sorted by priority
+    for (const event in onCallbacks) {
+        bot.On(event, async (msg, match) => {
+            const callbackPriorties = [...new Set(onCallbacks[event].map(x => x.priority))].sort().reverse()
+            for (const sortedPriority of callbackPriorties) {
+                let handled = false
+                for (const { priority, callback } of onCallbacks[event]) {
+                    if (priority !== sortedPriority) {
+                        continue
+                    }
+                    const result = await callback(msg, match)
+                    if (result) {
+                        handled = true
+                    }
+                }
+
+                if (handled) {
+                    break
+                }
+            }
+        })
     }
 
     return availableCommands
