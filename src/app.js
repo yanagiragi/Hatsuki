@@ -43,21 +43,29 @@ function loadCommands (bot, commands, config, whitelist) {
             return result
         }
 
+        const callbackPriority = priority ?? 50
         if (event != null) {
-            const arg = {
-                priority: priority ?? 50, // default value: 50
+            onCallbacks[event] ??= []
+            onCallbacks[event].push({
+                command,
+                priority: callbackPriority,
                 callback
-            }
-            if (event in onCallbacks) {
-                onCallbacks[event].push(arg)
-            }
-            else {
-                onCallbacks[event] = [arg]
-            }
+            })
         }
         else {
-            for (const match of matches) {
-                bot.OnText(match, callback)
+            onCallbacks.message ??= []
+            for (const matchRe of matches) {
+                onCallbacks.message.push({
+                    command,
+                    priority: callbackPriority,
+                    callback: async (msg, _) => {
+                        const matcheResult = msg.text?.match(matchRe)
+                        if (matcheResult) {
+                            const result = await callback(msg, matcheResult)
+                            return result
+                        }
+                    }
+                })
             }
         }
 
@@ -66,18 +74,18 @@ function loadCommands (bot, commands, config, whitelist) {
         }
     }
 
-    // Handle onEvent callbacks sorted by priority
+    // Handle onEvent & onText callbacks sorted by priority
     for (const event in onCallbacks) {
         bot.On(event, async (msg, match) => {
-            const callbackPriorties = [...new Set(onCallbacks[event].map(x => x.priority))].sort().reverse()
-            for (const sortedPriority of callbackPriorties) {
+            const callbackPriorties = [...new Set(onCallbacks[event].map(x => x.priority))]
+            const sortedCallbackPriorties = callbackPriorties.sort((x, y) => y - x)
+            for (const sortedPriority of sortedCallbackPriorties) {
                 let handled = false
-                for (const { priority, callback } of onCallbacks[event]) {
-                    if (priority !== sortedPriority) {
-                        continue
-                    }
+                const callbackCandidates = onCallbacks[event].filter(x => x.priority === sortedPriority)
+                for (const { command, callback } of callbackCandidates) {
                     const result = await callback(msg, match)
                     if (result) {
+                        // console.log(`${event} handled by: ${command} (priority = ${sortedPriority})`)
                         handled = true
                     }
                 }
