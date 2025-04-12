@@ -59,5 +59,6 @@ module.exports = {
     matches: [
         /^(?!\/)(.*)/
     ],
-    handler
+    handler,
+    priority: 150
 }
