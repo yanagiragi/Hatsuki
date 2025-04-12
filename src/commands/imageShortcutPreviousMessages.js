@@ -20,10 +20,13 @@ async function handler (msg, match, config, bot) {
     const chatId = GetChannelAlias(msg.chat.id)
     RecordPreviousMessages(chatId, processedMsg)
 
+    let handled = false
+
     // normal case
     const processedMatch = processedMsg.match(/^(?!\/)(.*)$/)
     if (await HandleShortcut(msg, processedMatch?.[1], config, bot)) {
         previousMessages[chatId].length = 0
+        handled = true
     }
 
     // case consider previous message
@@ -33,12 +36,15 @@ async function handler (msg, match, config, bot) {
         if (await HandleShortcut(msg, concatedPrevMessageMatch?.[1], config, bot)) {
             console.log(`concatedPrevMessage = ${concatedPrevMessage} matched. Clear previousMessages`)
             previousMessages[chatId].length = 0
+            handled = true
             break
         }
         else {
             // console.log(`concatedPrevMessage = ${concatedPrevMessage} not matched.`)
         }
     }
+
+    return handled
 }
 
 function RecordPreviousMessages (chatId, content) {
