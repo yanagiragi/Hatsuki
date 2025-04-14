@@ -13,5 +13,5 @@ module.exports = {
     event: 'message',
     matches: [],
     handler,
-    priority: 102
+    priority: 100
 }
