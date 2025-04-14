@@ -1,19 +1,22 @@
 const fs = require('fs')
 const path = require('path')
-const { SanitizeShortcut } = require('../../utils')
+const { SanitizeShortcut, Sample } = require('../../utils')
 
 // from serser322/ave-mujica-images
 const jsonPath = path.join(__dirname, '/data.json')
 const jsonContent = fs.readFileSync(jsonPath)
 const jsonData = JSON.parse(jsonContent)
 
-function GetImage (message) {
-    const firstMatch = jsonData.find(x => SanitizeShortcut(x.name) === SanitizeShortcut(message))
-    if (firstMatch) {
-        return `https://raw.githubusercontent.com/serser322/ave-mujica-images/refs/heads/main/src/assets/jpg/${encodeURIComponent(firstMatch.name)}.jpg`
+function FindJsonData (message, preprocessor) {
+    const matches = jsonData.filter(x => preprocessor(x.name) === preprocessor(message))
+    if (matches.length > 0) {
+        const { name } = Sample(matches)
+        return `https://raw.githubusercontent.com/serser322/ave-mujica-images/refs/heads/main/src/assets/jpg/${encodeURIComponent(name)}.jpg`
     }
+}
 
-    return null
+function GetImage (message) {
+    return FindJsonData(message, x => x) || FindJsonData(message, SanitizeShortcut)
 }
 
 module.exports = GetImage
