@@ -115,14 +115,18 @@ function Sample (arr) {
 }
 
 function SanitizeShortcut (text) {
-	if (!text) {
-		return
-	}
+    if (!text) {
+        return
+    }
     return text
         .replace(/[!?)( 「」。.：:]/g, '')
         .replace(/阿/g, '啊')
 }
 
+function Truncate (str, n) {
+    return (str.length > n) ? str.slice(0, n - 1) + '...' : str
+}
+
 module.exports = {
-    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample, SanitizeShortcut
+    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample, SanitizeShortcut, Truncate
 }
