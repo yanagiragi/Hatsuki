@@ -2,16 +2,32 @@ const fetch = require('node-fetch')
 const Aria2 = require('aria2')
 const { FormatFileSize, Truncate } = require('../utils')
 
+const maxResultAmount = 1000
+
 async function handler (msg, match, config, bot) {
     const host = config['Aria2.JsonRpcUrl']
     const secret = config['Aria2.JsonRpcSecret']
     const maxFilenameLength = config?.['Aria2.MaxFilenameLength'] ?? 25
 
     const aria2 = new Aria2({ fetch, host, secret })
-    const activeDownloads = await aria2.call('tellActive')
+    const multicall = [
+        ['tellActive'],
+        ['tellWaiting', 0, maxResultAmount],
+        ['tellStopped', 0, maxResultAmount],
+    ]
+    const results = await aria2.multicall(multicall)
 
-    let content = 'Aria Active Downloads:\n\n'
-    for (const metadata of activeDownloads) {
+    let content = ''
+    content += `# Active Downloads:\n\n${ParseResponse(results[0][0], maxFilenameLength)}`
+    content += `# Waiting:\n\n${ParseResponse(results[1][0], maxFilenameLength)}`
+    content += `# Stopped:\n\n${ParseResponse(results[2][0], maxFilenameLength)}`
+
+    return bot.ReplyMessage(msg, content.trim())
+}
+
+function ParseResponse (resp, maxFilenameLength) {
+    let content = ''
+    for (const metadata of resp) {
         const title = metadata.bittorrent?.info?.name ?? metadata.files[0].path
         const totalPercentage = metadata.totalLength === '0' ? 0 : parseFloat(metadata.completedLength) / parseFloat(metadata.totalLength)
         const downloadSpeed = FormatFileSize(parseInt(metadata.downloadSpeed))
@@ -44,7 +60,7 @@ async function handler (msg, match, config, bot) {
         }
     }
 
-    return bot.ReplyMessage(msg, content.trim())
+    return content
 }
 
 module.exports = {
