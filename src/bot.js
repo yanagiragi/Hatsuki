@@ -2,7 +2,16 @@ const TelegramBot = require('node-telegram-bot-api')
 
 class Bot {
     constructor(token) {
-        this.bot = new TelegramBot(token, { polling: true })
+        this.bot = new TelegramBot(token, {
+            polling: true,
+            request: {
+                agentOptions: {
+                    keepAlive: true,
+                    family: 4 // force use IPv4, ref: https://github.com/yagop/node-telegram-bot-api/issues/1136
+                }
+            }
+        })
+
         this.blackboard = {}
 
         this.bot.on('polling_error', (error) => {
