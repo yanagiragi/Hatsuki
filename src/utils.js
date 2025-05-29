@@ -127,6 +127,28 @@ function Truncate (str, n) {
     return (str.length > n) ? str.slice(0, n - 1) + '...' : str
 }
 
+function ChunkString (str, size) {
+    if (typeof str !== 'string' || typeof size !== 'number' || size <= 0) {
+        throw new Error('Invalid input: str must be a string and size must be a positive number');
+    }
+
+    const chunks = []
+    for (let i = 0; i < str.length; i += size) {
+        chunks.push(str.slice(i, i + size))
+    }
+    return chunks
+}
+
+
 module.exports = {
-    RequestAsync, ParseDOM, GetRequestOptions, ToCDB, NotifyWebhook, FormatFileSize, Sample, SanitizeShortcut, Truncate
+    RequestAsync,
+    ParseDOM,
+    GetRequestOptions,
+    ToCDB,
+    NotifyWebhook,
+    FormatFileSize,
+    Sample,
+    SanitizeShortcut,
+    Truncate,
+    ChunkString
 }

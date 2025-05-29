@@ -1,4 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api')
+const { ChunkString } = require('./utils')
+
+const MaxMessageLength = 4096
 
 class Bot {
     constructor(token) {
@@ -29,8 +32,13 @@ class Bot {
 
     async SendMessage (msg, content, option) {
         try {
-            const result = await this.bot.sendMessage(msg.chat.id, content, option)
-            return result
+            const chunkedContents = ChunkString(content, MaxMessageLength)
+            const results = []
+            for (const chunkedContent of chunkedContents) {
+                const result = await this.bot.sendMessage(msg.chat.id, content, option)
+                results.push(result)
+            }
+            return results
         }
         catch (err) {
             console.trace(`SendMessage: ${err}`)
@@ -39,8 +47,13 @@ class Bot {
 
     async ReplyMessage (msg, content, option) {
         try {
-            const result = await this.bot.sendMessage(msg.chat.id, content, { reply_to_message_id: msg.message_id, ...option })
-            return result
+            const chunkedContents = ChunkString(content, MaxMessageLength)
+            const results = []
+            for (const chunkedContent of chunkedContents) {
+                const result = await this.bot.sendMessage(msg.chat.id, chunkedContent, { reply_to_message_id: msg.message_id, ...option })
+                results.push(result)
+            }
+            return results
         }
         catch (err) {
             console.trace(`ReplyMessage: ${err}`)
