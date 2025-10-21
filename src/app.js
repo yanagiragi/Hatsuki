@@ -132,7 +132,8 @@ const commands = loadCommands(bot, [
     'findMeowMeowImage',
     'sendMessage',
     'ytdltext',
-    'mujicaImage'
+    'mujicaImage',
+    'restartBaiduNetdisk'
 ], config, ['messageRecordNewId'])
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
