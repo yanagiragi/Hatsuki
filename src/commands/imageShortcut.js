@@ -45,21 +45,19 @@ async function handler (msg, match, config, bot) {
             const replyStickerId = msg?.reply_to_message?.sticker?.file_id
             const replyPhotoId = msg?.reply_to_message?.photo?.reverse()?.[0]?.file_id
             const replyAnimationId = msg?.reply_to_message?.animation?.file_id
-            const isPhoto = replyPhotoId !== undefined
-            const isAnimation = replyAnimationId !== undefined
+            const replyVoiceId = msg?.reply_to_message?.voice?.file_id ?? msg?.reply_to_message?.audio?.file_id
+            const typeMap = {
+                'voice': replyVoiceId,
+                'photo': replyPhotoId,
+                'animation': replyAnimationId,
+                'sticker': replyStickerId
+            }
+            const matchTypeEntry = Object.entries(typeMap).find((k, v) => v != null)
             return {
                 mode: x.type,
                 key: replyMatch?.[1],
-                value: isPhoto
-                    ? replyPhotoId
-                    : isAnimation
-                        ? replyAnimationId
-                        : replyStickerId,
-                type: isPhoto
-                    ? 'photo'
-                    : isAnimation
-                        ? 'animation'
-                        : 'sticker'
+                value: matchTypeEntry[1],
+                type: matchTypeEntry[0]
             }
         }
 
@@ -112,6 +110,9 @@ async function handler (msg, match, config, bot) {
         }
         else if (result.type === 'animation') {
             await bot.ReplyAnimation(msg, result.value)
+        }
+        else if (result.type === 'voice') {
+            await bot.ReplyVoice(msg, result.value)
         }
     }
     else {

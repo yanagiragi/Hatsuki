@@ -130,7 +130,7 @@ async function ImageShortcut (chatId, option) {
         const entry = {
             chatId,
             value: option.value,
-            type: option.value.endsWith('.webp') ? 'sticker' : option.type
+            type: option.value?.endsWith('.webp') ? 'sticker' : option.type
         }
         if (match) {
             match.values.push(entry)

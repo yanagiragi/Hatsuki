@@ -27,6 +27,9 @@ async function HandleShortcut (msg, matchedContent, config, bot) {
         else if (result.type === 'animation') {
             await bot.ReplyAnimation(msg, result.value)
         }
+        else if (result.type === 'voice') {
+            await bot.ReplyVoice(msg, result.value)
+        }
 
         if (config['ImageShortcut.Report.Enabled']) {
             await bot.SendMessage({

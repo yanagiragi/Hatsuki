@@ -60,6 +60,17 @@ class Bot {
         }
     }
 
+    async SendVoice (msg, voicePath) {
+        try {
+            const result = await this.bot.sendVoice(msg.chat.id, voicePath)
+            return result
+        }
+        catch (err) {
+            console.trace(`SendVoice: ${err}`)
+        }
+    }
+
+
     async SendPhoto (msg, fileId, caption = null) {
         try {
             const result = await this.bot.sendPhoto(msg.chat.id, fileId, { caption })
@@ -137,6 +148,17 @@ class Bot {
         }
         catch (err) {
             console.trace(`ReplyAnimation: ${err}`)
+        }
+    }
+
+
+    async ReplyVoice (msg, fileId) {
+        try {
+            const result = await this.bot.sendVoice(msg.chat.id, fileId, { reply_to_message_id: msg.message_id })
+            return result
+        }
+        catch (err) {
+            console.trace(`ReplyVoice: ${err}`)
         }
     }
 
