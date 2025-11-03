@@ -116,7 +116,7 @@ function Sample (arr) {
 
 function SanitizeShortcut (text) {
     if (!text) {
-        return
+        return ''
     }
     return text
         .replace(/[!?)( 「」。.：:]/g, '')
