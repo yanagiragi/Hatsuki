@@ -142,4 +142,7 @@ const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].
 }, 'lscmd - List avabilable commands').trim()
 bot.OnText(/\/lscmd/, async (msg) => bot.ReplyMessage(msg, commandsInString))
 
+// force app shutdown if polling error happens
+bot.OnPollingError((error) => process.exit(1));
+
 console.log(`bot is ready, avabilable commands =\n[\n${commandsInString.split('\n').map(x => `    ${x}`).join('\n')}\n]`)

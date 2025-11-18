@@ -30,6 +30,10 @@ class Bot {
         return this.bot.onText(regExp, callback)
     }
 
+    OnPollingError (callback) {
+        return this.bot.on('polling_error', callback)
+    }
+
     async SendMessage (msg, content, option) {
         try {
             const chunkedContents = ChunkString(content, MaxMessageLength)
