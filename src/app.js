@@ -11,7 +11,7 @@ function loadCommands (bot, commands, config, whitelist) {
     const availableCommands = []
     const onCallbacks = {}
     for (const command of commands) {
-        const { isAdminCommand, event, matches, handler, enableConfig, descriptions, priority } = require(`./commands/${command}.js`)
+        const { isAdminCommand, isJob, event, matches, handler, enableConfig, descriptions, priority, trigger } = require(`./commands/${command}.js`)
         if (enableConfig && !config[enableConfig]) {
             // console.log(`Skip message from [${chatId}][${match?.[0]}] since it is not a allowed command`)
             continue
@@ -41,6 +41,11 @@ function loadCommands (bot, commands, config, whitelist) {
 
             const result = await handler(msg, match, config, bot)
             return result
+        }
+
+        if (isJob && trigger) {
+            trigger(bot, config)
+            continue
         }
 
         const callbackPriority = priority ?? 50
@@ -134,7 +139,8 @@ const commands = loadCommands(bot, [
     'ytdltext',
     'mujicaImage',
     'restartBaiduNetdisk',
-    'getTaiexPrice'
+    'getTaiexPrice',
+    'taiexChangeNotify'
 ], config, ['messageRecordNewId'])
 
 const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {

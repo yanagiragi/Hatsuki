@@ -11,4 +11,9 @@ async function GetMetadata (token) {
     return JSON.parse(content)
 }
 
-module.exports = { GetMetadata }
+async function CheckBelowTwoPercent (token) {
+    const metadata = await GetMetadata(token)
+    return { isBelow: metadata.changePercent <= -2.0, metadata }
+}
+
+module.exports = { GetMetadata, CheckBelowTwoPercent }
