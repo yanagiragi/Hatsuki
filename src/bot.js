@@ -20,6 +20,8 @@ class Bot {
         this.bot.on('polling_error', (error) => {
             console.trace(`[polling_error] ${error.code}: ${error.message}`)
         })
+
+        this.info = null
     }
 
     On (event, listener) {
@@ -196,6 +198,10 @@ class Bot {
 
     GetBlackboard (key) {
         return this.blackboard[key]
+    }
+
+    async UpdateInfo () {
+        this.info = await this.bot.getMe()
     }
 }
 

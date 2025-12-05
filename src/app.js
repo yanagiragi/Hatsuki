@@ -7,7 +7,7 @@ const configPath = path.join(__dirname, '/../config.json')
 const config = JSON.parse(fs.readFileSync(configPath))
 const isDev = config?.IsDev ?? true
 
-function loadCommands (bot, commands, config, whitelist) {
+function loadCommands (bot, botUserName, commands, config, whitelist) {
     const availableCommands = []
     const onCallbacks = {}
     for (const command of commands) {
@@ -22,7 +22,7 @@ function loadCommands (bot, commands, config, whitelist) {
             continue
         }
 
-        const callback = async (msg, match) => {
+        const handleCallback = async (msg, match) => {
             const chatId = msg.chat.id // use original chat id for permission check
             if (!config['Bot.ChatIdList']?.find(x => x.chatId === chatId)) {
                 console.log(`Skip message from [${chatId}][${msg.chat.title}] since it is not a allowed chat`)
@@ -54,7 +54,7 @@ function loadCommands (bot, commands, config, whitelist) {
             onCallbacks[event].push({
                 command,
                 priority: callbackPriority,
-                callback
+                callback: handleCallback
             })
         }
         else {
@@ -64,9 +64,10 @@ function loadCommands (bot, commands, config, whitelist) {
                     command,
                     priority: callbackPriority,
                     callback: async (msg, _) => {
-                        const matcheResult = msg.text?.match(matchRe)
+                        const text = msg.text?.replace(`@${botUserName}`, '') // support /command & /command@bot
+                        const matcheResult = text?.match(matchRe)
                         if (matcheResult) {
-                            const result = await callback(msg, matcheResult)
+                            const result = await handleCallback(msg, matcheResult)
                             return result
                         }
                     }
@@ -105,50 +106,56 @@ function loadCommands (bot, commands, config, whitelist) {
     return availableCommands
 }
 
-const bot = new TelegramBot(config.TelegramToken)
-const commands = loadCommands(bot, [
-    'start',
-    'stat',
-    'replyTwitter',
-    'imageShortcut',
-    'imageShortcutPreviousMessages',
-    'avr',
-    'aliasGet',
-    'aliasSet',
-    'getBase64',
-    'idGet',
-    'idSet',
-    'euroIdSet',
-    'messageEuropean',
-    'messageImageShortcut',
-    'messageRecordNewId',
-    'megadl',
-    'ytdl',
-    'ytdlmp3',
-    'aria2',
-    'aria2ls',
-    'goImage',
-    'ytdlls',
-    'enableFeature',
-    'disableFeature',
-    'getEnabledFeature',
-    'megals',
-    'meowMeowImage',
-    'findMeowMeowImage',
-    'sendMessage',
-    'ytdltext',
-    'mujicaImage',
-    'restartBaiduNetdisk',
-    'getTaiexPrice',
-    'taiexChangeNotify'
-], config, ['messageRecordNewId'])
+async function Run () {
+    const bot = new TelegramBot(config.TelegramToken)
+    await bot.UpdateInfo()
 
-const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
-    return `${acc}\n${ele}`
-}, 'lscmd - List avabilable commands').trim()
-bot.OnText(/\/lscmd/, async (msg) => bot.ReplyMessage(msg, commandsInString))
+    const commands = loadCommands(bot, bot.info.username, [
+        'start',
+        'stat',
+        'replyTwitter',
+        'imageShortcut',
+        'imageShortcutPreviousMessages',
+        'avr',
+        'aliasGet',
+        'aliasSet',
+        'getBase64',
+        'idGet',
+        'idSet',
+        'euroIdSet',
+        'messageEuropean',
+        'messageImageShortcut',
+        'messageRecordNewId',
+        'megadl',
+        'ytdl',
+        'ytdlmp3',
+        'aria2',
+        'aria2ls',
+        'goImage',
+        'ytdlls',
+        'enableFeature',
+        'disableFeature',
+        'getEnabledFeature',
+        'megals',
+        'meowMeowImage',
+        'findMeowMeowImage',
+        'sendMessage',
+        'ytdltext',
+        'mujicaImage',
+        'restartBaiduNetdisk',
+        'getTaiexPrice',
+        'taiexChangeNotify'
+    ], config, ['messageRecordNewId'])
 
-// force app shutdown if polling error happens
-bot.OnPollingError((error) => process.exit(1));
+    const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
+        return `${acc}\n${ele}`
+    }, 'lscmd - List avabilable commands').trim()
+    bot.OnText(/\/lscmd/, async (msg) => bot.ReplyMessage(msg, commandsInString))
 
-console.log(`bot is ready, avabilable commands =\n[\n${commandsInString.split('\n').map(x => `    ${x}`).join('\n')}\n]`)
+    // force app shutdown if polling error happens
+    bot.OnPollingError((error) => process.exit(1))
+
+    console.log(`bot is ready, avabilable commands =\n[\n${commandsInString.split('\n').map(x => `    ${x}`).join('\n')}\n]`)
+}
+
+Run()
