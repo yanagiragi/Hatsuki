@@ -72,3 +72,4 @@ src/Plugins/ChannelAlias/data.json
 src/Plugins/EnableFeature/data.json
 src/Plugins/MeowMeowImage/Storage/*/*.png
 src/Plugins/MeowMeowImage/Storage/fileId.json
+src/Plugins/Pikmin/data.json

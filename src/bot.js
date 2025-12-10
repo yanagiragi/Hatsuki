@@ -36,6 +36,10 @@ class Bot {
         return this.bot.on('polling_error', callback)
     }
 
+    AnswerCallbackQuery (id) {
+        return this.bot.answerCallbackQuery(id)
+    }
+
     async SendMessage (msg, content, option) {
         try {
             const chunkedContents = ChunkString(content, MaxMessageLength)

@@ -139,6 +139,16 @@ function ChunkString (str, size) {
     return chunks
 }
 
+function ChunkArray (arr, chunkSize) {
+    return arr.reduce((acc, cur, i) => {
+        if (i % chunkSize === 0)
+            acc.push([cur])
+        else
+            acc[acc.length - 1].push(cur)
+        return acc
+    }, [])
+}
+
 
 module.exports = {
     RequestAsync,
@@ -150,5 +160,6 @@ module.exports = {
     Sample,
     SanitizeShortcut,
     Truncate,
-    ChunkString
+    ChunkString,
+    ChunkArray
 }

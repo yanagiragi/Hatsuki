@@ -23,7 +23,7 @@ function loadCommands (bot, botUserName, commands, config, whitelist) {
         }
 
         const handleCallback = async (msg, match) => {
-            const chatId = msg.chat.id // use original chat id for permission check
+            const chatId = msg?.chat?.id ?? msg.message?.chat?.id // use original chat id for permission check
             if (!config['Bot.ChatIdList']?.find(x => x.chatId === chatId)) {
                 console.log(`Skip message from [${chatId}][${msg.chat.title}] since it is not a allowed chat`)
                 return
@@ -144,7 +144,10 @@ async function Run () {
         'mujicaImage',
         'restartBaiduNetdisk',
         'getTaiexPrice',
-        'taiexChangeNotify'
+        'taiexChangeNotify',
+        'pikminBloom',
+        'pikminBloomInteractive',
+        'pikminBloomInteractiveEntry',
     ], config, ['messageRecordNewId'])
 
     const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
