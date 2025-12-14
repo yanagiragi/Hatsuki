@@ -23,16 +23,15 @@ const GetTypes = type => {
 
 async function SendOptions (bot, msg, optionType, dataPrefix, current) {
     const types = GetTypes(optionType)
-    const buttons = types.map(x => ({
-        text: x,
-        callback_data: `${dataPrefix} ${x}`
+    const buttons = types.map((ele, idx) => ({
+        text: ele,
+        callback_data: `${dataPrefix} ${idx}`
     }))
     const option = {
         reply_markup: {
             inline_keyboard: ChunkArray(buttons, 3)
         }
     }
-
     return bot.ReplyMessage(msg, `Choose a ${optionType} type for ${current}`, option)
 }
 
@@ -77,18 +76,34 @@ async function handler (query, match, config, bot) {
     }
 
     else if (!entry.pikminType) {
-        await SendOptions(bot, msg, 'pikmin', `${callbackPrefix} ${entry.decorType}`, `${entry.decorType} Pikmin`)
+        const idx = DecorTypes.indexOf(entry.decorType)
+        await SendOptions(bot, msg, 'pikmin', `${callbackPrefix} ${idx}`, `${entry.decorType} Pikmin`)
     }
 
     else if (!entry.acquireType) {
+        const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
+        const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
         await SendOptions(bot, msg,
             'acquire',
-            `${callbackPrefix} ${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc}`,
+            `${callbackPrefix} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc}`,
             `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} Pikmin`)
     }
 
     else if (entry.isValid()) {
-        const getCommand = cmd => `${pkmCallbackPrefix}${cmd} ${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc} ${entry.acquireType} ${entry.misc}`
+        const getCommand = cmd => {
+            const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
+            const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
+            const acquireTypeIdx = AcquireTypes.indexOf(entry.acquireType)
+            const command = `${pkmCallbackPrefix}${cmd} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${acquireTypeIdx} ${entry.misc}`
+
+            const size = new TextEncoder().encode(command).length
+            if (size > 64) {
+                // reach telegram callback_data size limit
+                console.log(`Detect long callback_data: ${command}, byte size = ${size}`)
+            }
+
+            return command
+        }
         const option = {
             reply_markup: {
                 inline_keyboard: [

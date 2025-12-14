@@ -122,10 +122,10 @@ class PikminBloomEntry {
 function ParseEntry (message) {
     const result = new PikminBloomEntry()
     const splitted = message.split(' ')
-    result.decorType = splitted?.[0]
-    result.pikminType = splitted?.[1]
+    result.decorType = DecorTypes?.[splitted?.[0]] ?? splitted?.[0]
+    result.pikminType = PikminTypes?.[splitted?.[1]] ?? splitted?.[1]
     result.pikminTypeMisc = splitted?.[2] ?? CONSTANT_NONE
-    result.acquireType = splitted?.[3]
+    result.acquireType = AcquireTypes?.[splitted?.[3]] ?? splitted?.[3]
     result.misc = splitted?.[4] ?? CONSTANT_NONE
     return result
 }
