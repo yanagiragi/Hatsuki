@@ -9,10 +9,6 @@ async function handler (msg, match, config, bot) {
         return AddEntry(bot, msg, msg.from.id, entry)
     }
 
-    else if (commandType == 'edit') {
-        return EditEntry(bot, msg, msg.from.id, entry)
-    }
-
     else if (commandType == 'del') {
         return RemoveEntry(bot, msg, msg.from.id, entry)
     }

@@ -48,10 +48,6 @@ async function handler (query, match, config, bot) {
             await AddEntry(bot, msg, query.from.id, entry)
         }
 
-        else if (commandType == 'edit') {
-            await EditEntry(bot, msg, query.from.id, entry)
-        }
-
         else if (commandType == 'del') {
             await RemoveEntry(bot, msg, query.from.id, entry)
         }
@@ -114,7 +110,6 @@ async function handler (query, match, config, bot) {
                 inline_keyboard: [
                     [
                         { text: "Add", callback_data: getCommand('add') },
-                        { text: "Edit", callback_data: getCommand('edit') },
                         { text: "Del", callback_data: getCommand('del') },
                         { text: "List", callback_data: getCommand('list') }
                     ]
@@ -127,7 +122,7 @@ async function handler (query, match, config, bot) {
     }
 
     else if (entry.pikminType == CONSTANT_OTHER && entry.pikminTypeMisc == CONSTANT_NONE) {
-        const command = query.data.replace(callbackPrefix, '/pkm add')
+        const command = `${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc} ${entry.acquireType} ${entry.misc}`
         await bot.ReplyMessage(msg, `Detect pikminTypeMisc required.\nYou may copy the command to manual add pikmin entry: \n<code>${command}</code>`, { parse_mode: 'HTML' })
     }
 
