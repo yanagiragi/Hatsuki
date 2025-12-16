@@ -3,9 +3,9 @@ const {
     DecorTypes,
     PikminTypes,
     AcquireTypes,
+    MiscTypes,
     ParseEntry,
     AddEntry,
-    EditEntry,
     RemoveEntry,
     ListEntry,
     CONSTANT_OTHER,
@@ -19,6 +19,7 @@ const GetTypes = type => {
     if (type == 'decor') return DecorTypes
     if (type == 'pikmin') return PikminTypes
     if (type == 'acquire') return AcquireTypes
+    if (type == 'misc') return MiscTypes
 }
 
 async function SendOptions (bot, msg, optionType, dataPrefix, current) {
@@ -90,12 +91,23 @@ async function handler (query, match, config, bot) {
             `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} Pikmin`)
     }
 
+    else if (!entry.misc) {
+        const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
+        const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
+        const acquireTypeIdx = AcquireTypes.indexOf(entry.acquireType)
+        await SendOptions(bot, msg,
+            'misc',
+            `${callbackPrefix} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${acquireTypeIdx}`,
+            `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} ${entry.acquireType} Pikmin`)
+    }
+
     else if (entry.isValid()) {
         const getCommand = cmd => {
             const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
             const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
             const acquireTypeIdx = AcquireTypes.indexOf(entry.acquireType)
-            const command = `${pkmCallbackPrefix}${cmd} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${acquireTypeIdx} ${entry.misc}`
+            const miscTypeIdx = MiscTypes.indexOf(entry.misc)
+            const command = `${pkmCallbackPrefix}${cmd} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${acquireTypeIdx} ${miscTypeIdx}`
 
             const size = new TextEncoder().encode(command).length
             if (size > 64) {

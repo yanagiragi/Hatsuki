@@ -102,20 +102,25 @@ const AcquireTypes = [
     CONSTANT_NONE
 ]
 
+const MiscTypes = [
+    "海外",
+    CONSTANT_NONE
+]
+
 class PikminBloomEntry {
     constructor() {
         this.decorType = null
         this.pikminType = null
         this.pikminTypeMisc = CONSTANT_NONE
         this.acquireType = null
-        this.misc = CONSTANT_NONE
+        this.misc = null
     }
 
     isValid () {
         if (this.pikminType == CONSTANT_OTHER && this.pikminTypeMisc == CONSTANT_NONE) {
             return false
         }
-        return this.decorType && this.pikminType && this.acquireType
+        return this.decorType && this.pikminType && this.acquireType && this.misc
     }
 }
 
@@ -126,7 +131,7 @@ function ParseEntry (message) {
     result.pikminType = PikminTypes?.[splitted?.[1]] ?? splitted?.[1]
     result.pikminTypeMisc = splitted?.[2] ?? CONSTANT_NONE
     result.acquireType = AcquireTypes?.[splitted?.[3]] ?? splitted?.[3]
-    result.misc = splitted?.[4] ?? CONSTANT_NONE
+    result.misc = MiscTypes?.[splitted?.[4]] ?? splitted?.[4]
     return result
 }
 
@@ -155,27 +160,6 @@ async function AddEntry (bot, msg, id, entry) {
     Save()
 
     return bot.ReplyMessage(msg, `Add new entry: ${JSON.stringify(entry, null, 4)}`)
-}
-
-async function EditEntry (bot, msg, id, entry) {
-    const filterFunc = x =>
-        x.decorType == entry.decorType &&
-        x.pikminType == entry.pikminType &&
-        x.pikminTypeMisc == entry.pikminTypeMisc &&
-        x.acquireType == entry.acquireType &&
-        x.misc == entry.misc
-
-    const matches = data?.[id]?.filter(filterFunc)
-    if (matches.length > 1) {
-        return bot.ReplyMessage(msg, `Multiple match exists. Skipped`)
-    }
-
-    matches[0].acquireType = entry.acquireType
-    matches[0].misc = entry.misc
-
-    Save()
-
-    return bot.ReplyMessage(msg, `Update entry: acquireType = ${match.acquireType}, misc = ${match.misc}`)
 }
 
 async function RemoveEntry (bot, msg, id, entry) {
@@ -251,8 +235,8 @@ module.exports = {
     DecorTypes,
     PikminTypes,
     AcquireTypes,
+    MiscTypes,
     AddEntry,
-    EditEntry,
     RemoveEntry,
     ListEntry,
     CONSTANT_OTHER,
