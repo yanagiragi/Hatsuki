@@ -45,22 +45,27 @@ async function handler (query, match, config, bot) {
         const entry = ParseEntry(command)
 
         if (commandType == 'add') {
-            return AddEntry(bot, msg, query.from.id, entry)
+            await AddEntry(bot, msg, query.from.id, entry)
         }
 
         else if (commandType == 'edit') {
-            return EditEntry(bot, msg, query.from.id, entry)
+            await EditEntry(bot, msg, query.from.id, entry)
         }
 
         else if (commandType == 'del') {
-            return RemoveEntry(bot, msg, query.from.id, entry)
+            await RemoveEntry(bot, msg, query.from.id, entry)
         }
 
         else if (commandType == 'list') {
-            return ListEntry(bot, msg, query.from.id, entry)
+            await ListEntry(bot, msg, query.from.id, entry)
         }
 
-        return bot.ReplyMessage(msg, `Unknown command type: ${commandType}`)
+        else {
+            await bot.ReplyMessage(msg, `Unknown command type: ${commandType}`)
+        }
+
+        // Always answer callback to remove "loading" animation
+        return bot.AnswerCallbackQuery(query.id)
     }
 
     else if (!data.startsWith(callbackPrefix)) {
@@ -118,12 +123,12 @@ async function handler (query, match, config, bot) {
             parse_mode: 'HTML'
         }
 
-        return bot.ReplyMessage(msg, `Proceed actions to the following pikmin bloom entry?\n<code>${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc} ${entry.acquireType} ${entry.misc}</code>`, option)
+        await bot.ReplyMessage(msg, `Proceed actions to the following pikmin bloom entry?\n<code>${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc} ${entry.acquireType} ${entry.misc}</code>`, option)
     }
 
     else if (entry.pikminType == CONSTANT_OTHER && entry.pikminTypeMisc == CONSTANT_NONE) {
         const command = query.data.replace(callbackPrefix, '/pkm add')
-        return bot.ReplyMessage(msg, `Detect pikminTypeMisc required.\nYou may copy the command to manual add pikmin entry: \n<code>${command}</code>`, { parse_mode: 'HTML' })
+        await bot.ReplyMessage(msg, `Detect pikminTypeMisc required.\nYou may copy the command to manual add pikmin entry: \n<code>${command}</code>`, { parse_mode: 'HTML' })
     }
 
     else {
