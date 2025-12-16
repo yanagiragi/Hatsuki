@@ -52,7 +52,8 @@ async function handler (msg, match, config, bot) {
                 'animation': replyAnimationId,
                 'sticker': replyStickerId
             }
-            const matchTypeEntry = Object.entries(typeMap).find((k, v) => v != null)
+            const matchTypeEntry = Object.entries(typeMap).find((ele, idx) => ele[1] != null)
+            console.log(typeMap, matchTypeEntry)
             return {
                 mode: x.type,
                 key: replyMatch?.[1],
