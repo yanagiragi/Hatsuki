@@ -143,7 +143,9 @@ async function AddEntry (bot, msg, id, entry) {
     const match = data?.[id]?.find(x =>
         x.decorType == entry.decorType &&
         x.pikminType == entry.pikminType &&
-        x.pikminTypeMisc == entry.pikminTypeMisc
+        x.pikminTypeMisc == entry.pikminTypeMisc &&
+        x.acquireType == entry.acquireType &&
+        x.misc == entry.misc
     )
 
     if (match) {
