@@ -77,6 +77,8 @@ const DecorTypes = [
     "2025裝飾",
     "奶嘴",
     "金色飛機玩具",
+    "2025派對拉炮",
+    "日式年菜",
 
     CONSTANT_NONE
 ]
