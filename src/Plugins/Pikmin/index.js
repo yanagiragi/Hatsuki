@@ -134,8 +134,8 @@ function ParseEntry (message) {
     result.decorType = DecorTypes?.[splitted?.[0]] ?? splitted?.[0]
     result.pikminType = PikminTypes?.[splitted?.[1]] ?? splitted?.[1]
     result.pikminTypeMisc = splitted?.[2] ?? CONSTANT_NONE
-    result.acquireType = AcquireTypes?.[splitted?.[3]] ?? splitted?.[3]
-    result.misc = MiscTypes?.[splitted?.[4]] ?? splitted?.[4]
+    result.misc = MiscTypes?.[splitted?.[3]] ?? splitted?.[3]
+    result.acquireType = AcquireTypes?.[splitted?.[4]] ?? splitted?.[4]
     return result
 }
 

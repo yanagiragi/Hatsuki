@@ -54,6 +54,7 @@ async function handler (query, match, config, bot) {
         }
 
         else if (commandType == 'list') {
+            console.log(command, JSON.stringify(entry))
             await ListEntry(bot, msg, query.from.id, entry)
         }
 
@@ -82,23 +83,22 @@ async function handler (query, match, config, bot) {
         await SendOptions(bot, msg, 'pikmin', `${callbackPrefix} ${idx}`, `${entry.decorType} Pikmin`)
     }
 
+    else if (!entry.misc) {
+        const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
+        const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
+        await SendOptions(bot, msg,
+            'misc',
+            `${callbackPrefix} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc}`,
+            `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} Pikmin`)
+    }
+
     else if (!entry.acquireType) {
         const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
         const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
         await SendOptions(bot, msg,
             'acquire',
-            `${callbackPrefix} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc}`,
-            `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} Pikmin`)
-    }
-
-    else if (!entry.misc) {
-        const decorTypeIdx = DecorTypes.indexOf(entry.decorType)
-        const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
-        const acquireTypeIdx = AcquireTypes.indexOf(entry.acquireType)
-        await SendOptions(bot, msg,
-            'misc',
-            `${callbackPrefix} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${acquireTypeIdx}`,
-            `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} ${entry.acquireType} Pikmin`)
+            `${callbackPrefix} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${entry.misc}`,
+            `${entry.pikminType}${(entry.pikminTypeMisc != CONSTANT_NONE ? `-${entry.pikminTypeMisc}` : '')} ${entry.decorType} ${entry.misc} Pikmin`)
     }
 
     else if (entry.isValid()) {
@@ -107,7 +107,7 @@ async function handler (query, match, config, bot) {
             const pikminTypeIdx = PikminTypes.indexOf(entry.pikminType)
             const acquireTypeIdx = AcquireTypes.indexOf(entry.acquireType)
             const miscTypeIdx = MiscTypes.indexOf(entry.misc)
-            const command = `${pkmCallbackPrefix}${cmd} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${acquireTypeIdx} ${miscTypeIdx}`
+            const command = `${pkmCallbackPrefix}${cmd} ${decorTypeIdx} ${pikminTypeIdx} ${entry.pikminTypeMisc} ${miscTypeIdx} ${acquireTypeIdx}`
 
             const size = new TextEncoder().encode(command).length
             if (size > 64) {
