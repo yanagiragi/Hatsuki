@@ -13,7 +13,7 @@ async function GetMetadata (token) {
 
 async function CheckBelowTwoPercent (token) {
     const metadata = await GetMetadata(token)
-    return { isBelow: metadata.changePercent <= -2.0, metadata }
+    return { isBelow: parseFloat(metadata.changePercent) <= -2.0, metadata }
 }
 
 module.exports = { GetMetadata, CheckBelowTwoPercent }
