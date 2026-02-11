@@ -17,8 +17,19 @@ class Bot {
 
         this.blackboard = {}
 
-        this.bot.on('polling_error', (error) => {
+        this.bot.on('polling_error', async (error) => {
             console.trace(`[polling_error] ${error.code}: ${error.message}`)
+
+            try {
+                await bot.stopPolling();
+                await new Promise(r => setTimeout(r, 5000))
+                this.bot.startPolling()
+                console.log(`[polling_error] recovered from polling error`)
+            }
+            catch (error) {
+                console.error(`[polling_error] unable to restore from polling error, ${error.code}: ${error.message}`)
+                process.exit(1)
+            }
         })
 
         this.info = null
