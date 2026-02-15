@@ -40,6 +40,9 @@ async function handler (query, match, config, bot) {
     const msg = query.message
     const data = query.data
 
+    // Always answer callback to remove "loading" animation
+    await bot.AnswerCallbackQuery(query.id)
+
     if (data.startsWith(pkmCallbackPrefix)) {
         const commandType = data.match(/^\/pkm ([a-z]*)/)?.[1]
         const command = data.replace(`/pkm ${commandType}`, '').trim()
@@ -61,9 +64,6 @@ async function handler (query, match, config, bot) {
         else {
             await bot.ReplyMessage(msg, `Unknown command type: ${commandType}`)
         }
-
-        // Always answer callback to remove "loading" animation
-        return bot.AnswerCallbackQuery(query.id)
     }
 
     else if (!data.startsWith(callbackPrefix)) {

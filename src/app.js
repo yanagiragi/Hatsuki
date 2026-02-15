@@ -163,3 +163,10 @@ async function Run () {
 }
 
 Run()
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise);
+    console.error('Reason:', reason);
+    console.error(reason.stack);
+    process.exit(2)
+})

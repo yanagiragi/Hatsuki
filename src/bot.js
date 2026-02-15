@@ -21,7 +21,7 @@ class Bot {
             console.trace(`[polling_error] ${error.code}: ${error.message}`)
 
             try {
-                await bot.stopPolling();
+                await this.bot.stopPolling();
                 await new Promise(r => setTimeout(r, 5000))
                 this.bot.startPolling()
                 console.log(`[polling_error] recovered from polling error`)
@@ -47,8 +47,14 @@ class Bot {
         return this.bot.on('polling_error', callback)
     }
 
-    AnswerCallbackQuery (id) {
-        return this.bot.answerCallbackQuery(id)
+    async AnswerCallbackQuery (id) {
+        try {
+            const ret = await this.bot.answerCallbackQuery(id)
+            return ret
+        }
+        catch (err) {
+            console.trace(`SendMessage: ${err}`)
+        }
     }
 
     async SendMessage (msg, content, option) {
