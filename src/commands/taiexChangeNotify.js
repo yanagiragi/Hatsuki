@@ -18,8 +18,8 @@ async function trigger (bot, config) {
                     for (const { chatId } of chatIdList) {
                         await bot.SendMessage({ chat: { id: chatId } }, notifyText)
                     }
+                    previousCheckedDate = metadata.date
                 }
-                previousCheckedDate = metadata.date
             }, interval * 1000)
         }
     }
