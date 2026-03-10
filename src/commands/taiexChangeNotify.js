@@ -1,7 +1,5 @@
 const { CheckBelowTwoPercent } = require('../Plugins/TaiexPriceNotify')
 
-let previousCheckedDate = null
-
 async function trigger (bot, config) {
     let intervalId = null
     if (config?.['TaiexPriceNotify.Enabled']) {
@@ -12,13 +10,12 @@ async function trigger (bot, config) {
         if (interval > 0 && token && notifyText) {
             console.log(`Schedule to check Taiex price every ${interval} seconds`)
             intervalId = setInterval(async () => {
-                const { isBelow, metadata } = await CheckBelowTwoPercent(token)
-                const shouldNotify = isBelow && previousCheckedDate != metadata.date
+                const { isBelow, metadata, needUpdate } = await CheckBelowTwoPercent(token)
+                const shouldNotify = isBelow && needUpdate
                 if (shouldNotify) {
                     for (const { chatId } of chatIdList) {
                         await bot.SendMessage({ chat: { id: chatId } }, notifyText)
                     }
-                    previousCheckedDate = metadata.date
                 }
             }, interval * 1000)
         }
