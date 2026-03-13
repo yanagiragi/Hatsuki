@@ -148,7 +148,9 @@ async function Run () {
         'pikminBloom',
         'pikminBloomInteractive',
         'pikminBloomInteractiveEntry',
-        'getTwitterGif'
+        'getTwitterGif',
+        'pikminBloomList',
+        'pikminBloomListEntry',
     ], config, ['messageRecordNewId'])
 
     const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
