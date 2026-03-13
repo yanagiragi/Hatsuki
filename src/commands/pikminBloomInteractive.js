@@ -57,13 +57,14 @@ async function handler (query, match, config, bot) {
         }
 
         else if (commandType == 'list') {
-            console.log(command, JSON.stringify(entry))
             await ListEntry(bot, msg, query.from.id, entry)
         }
 
         else {
             await bot.ReplyMessage(msg, `Unknown command type: ${commandType}`)
         }
+
+        return
     }
 
     else if (!data.startsWith(callbackPrefix)) {
