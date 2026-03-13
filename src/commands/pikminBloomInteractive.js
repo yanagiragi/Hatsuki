@@ -44,7 +44,7 @@ async function handler (query, match, config, bot) {
     await bot.AnswerCallbackQuery(query.id)
 
     if (data.startsWith(pkmCallbackPrefix)) {
-        const commandType = data.match(/^\/pkm ([a-z]*)/)?.[1]
+        const commandType = data.match(/^\/pkm ([a-zA-Z]*)/)?.[1]
         const command = data.replace(`/pkm ${commandType}`, '').trim()
         const entry = ParseEntry(command)
 
@@ -57,7 +57,11 @@ async function handler (query, match, config, bot) {
         }
 
         else if (commandType == 'list') {
-            await ListEntry(bot, msg, query.from.id, entry)
+            await ListEntry(bot, msg, query.from.id, entry, false)
+        }
+
+        else if (commandType == 'listTable') {
+            await ListEntry(bot, msg, query.from.id, entry, true)
         }
 
         else {
@@ -124,7 +128,8 @@ async function handler (query, match, config, bot) {
                     [
                         { text: "Add", callback_data: getCommand('add') },
                         { text: "Del", callback_data: getCommand('del') },
-                        { text: "List", callback_data: getCommand('list') }
+                        { text: "List", callback_data: getCommand('list') },
+                        { text: "List (Table)", callback_data: getCommand('listTable') }
                     ]
                 ]
             },

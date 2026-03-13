@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const { markdownTable } = require('markdown-table')
 
 const CONSTANT_OTHER = '其它'
 const CONSTANT_NONE = 'none'
@@ -98,8 +99,8 @@ const PikminTypes = [
     "白",
     "紫",
     "黑",
-    "粉紅",
-    "冰塊",
+    "粉",
+    "冰",
     CONSTANT_OTHER,
     CONSTANT_NONE
 ]
@@ -200,7 +201,7 @@ async function RemoveEntry (bot, msg, id, entry) {
     return bot.ReplyMessage(msg, `Remove entry: ${JSON.stringify(entry, null, 4)}`)
 }
 
-async function ListEntry (bot, msg, id, entry) {
+async function ListEntry (bot, msg, id, entry, outputAsTable) {
     let entries = data?.[id]
 
     const listAll = (entry.decorType == null || entry.decorType == CONSTANT_NONE) &&
@@ -238,7 +239,15 @@ async function ListEntry (bot, msg, id, entry) {
     // sort by decorType
     entries.sort((x, y) => x.decorType.localeCompare(y.decorType))
 
-    return bot.ReplyMessage(msg, `Found entries: ${JSON.stringify(entries, null, 4)}`)
+    if (outputAsTable) {
+        const tableData = entries.map(x => [x.decorType, (x.pikminType == CONSTANT_OTHER ? `${x.pikminType}-${x.pikminTypeMisc}` : x.pikminType), x.acquireType, x.misc])
+        const option = { parse_mode: 'Markdown' }
+        const output = markdownTable([['飾品', '皮克敏', '狀態', '地點']].concat(tableData))
+        return bot.ReplyMessage(msg, `Found entries: \`\`\`\n${output}\`\`\``, option)
+    }
+    else {
+        return bot.ReplyMessage(msg, `Found entries: ${JSON.stringify(entries, null, 4)}`)
+    }
 }
 
 module.exports = {
