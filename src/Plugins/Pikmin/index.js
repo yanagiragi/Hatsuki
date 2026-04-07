@@ -84,10 +84,13 @@ const DecorTypes = [
     "2026巧克力",
     "巧克力",
     "農曆新年飾品:金色",
-
     "彩色粉末",
     "下午茶",
     "逆轉情人節",
+    "荷蘭木鞋鑰匙圈",
+    "兔寶寶彩蛋",
+    "復活節彩蛋",
+    "Super Mario Keychain",
 
     CONSTANT_NONE
 ]
