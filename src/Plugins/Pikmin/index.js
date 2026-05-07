@@ -33,7 +33,8 @@ const DecorTypes = [
     "麵包店",
     "美容院",
     "服裝店",
-    "公園",
+    "公園/幸運草",
+    "公園/四葉幸運草",
     "圖書館",
     "路邊/貼紙",
     "路邊/金幣",
@@ -91,6 +92,7 @@ const DecorTypes = [
     "兔寶寶彩蛋",
     "復活節彩蛋",
     "Super Mario Keychain",
+    '遊戲卡匣',
 
     CONSTANT_NONE
 ]
