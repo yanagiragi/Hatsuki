@@ -93,6 +93,8 @@ const DecorTypes = [
     "復活節彩蛋",
     "Super Mario Keychain",
     '遊戲卡匣',
+    'Nitendo遊戲機 1980-1995',
+    '遊戲卡牌',
 
     CONSTANT_NONE
 ]
