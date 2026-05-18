@@ -136,7 +136,7 @@ async function handler (query, match, config, bot) {
             parse_mode: 'HTML'
         }
 
-        await bot.ReplyMessage(msg, `Proceed actions to the following pikmin bloom entry?\n<code>${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc} ${entry.acquireType} ${entry.misc}</code>`, option)
+        await bot.ReplyMessage(msg, `Proceed actions to the following pikmin bloom entry?\n<code>${entry.decorType} ${entry.pikminType} ${entry.pikminTypeMisc} ${entry.misc} ${entry.acquireType}</code>`, option)
     }
 
     else if (entry.pikminType == CONSTANT_OTHER && entry.pikminTypeMisc == CONSTANT_NONE) {
