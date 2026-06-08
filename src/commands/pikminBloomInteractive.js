@@ -1,6 +1,6 @@
 const { ChunkArray } = require('../utils')
 const {
-    DecorTypes,
+    GetDecorTypes,
     PikminTypes,
     AcquireTypes,
     MiscTypes,
@@ -16,7 +16,7 @@ const callbackPrefix = '/pkmi'
 const pkmCallbackPrefix = '/pkm '
 
 const GetTypes = type => {
-    if (type == 'decor') return DecorTypes
+    if (type == 'decor') return GetDecorTypes()
     if (type == 'pikmin') return PikminTypes
     if (type == 'acquire') return AcquireTypes
     if (type == 'misc') return MiscTypes
@@ -39,6 +39,7 @@ async function SendOptions (bot, msg, optionType, dataPrefix, current) {
 async function handler (query, match, config, bot) {
     const msg = query.message
     const data = query.data
+    const DecorTypes = GetDecorTypes()
 
     // Always answer callback to remove "loading" animation
     await bot.AnswerCallbackQuery(query.id)
