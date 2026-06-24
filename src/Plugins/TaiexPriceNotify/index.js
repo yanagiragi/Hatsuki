@@ -13,13 +13,17 @@ async function GetMetadata (token) {
         }
     }
     const content = await RequestAsync(options)
+    if (content == null) {
+        return null
+    }
+
     return JSON.parse(content)
 }
 
 async function CheckBelowTwoPercent (token) {
     const metadata = await GetMetadata(token)
-    const isBelow = parseFloat(metadata.changePercent) <= -2.0
-    const needUpdate = isBelow && data.metadata?.date != metadata.date
+    const isBelow = parseFloat(metadata?.changePercent) <= -2.0
+    const needUpdate = isBelow && data.metadata?.date != metadata?.date
     if (needUpdate) {
         data.metadata = metadata
         fs.writeFileSync(dataPath, JSON.stringify(data))
