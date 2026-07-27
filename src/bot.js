@@ -1,5 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api')
 const { ChunkString } = require('./utils')
+const fetch = require('node-fetch')
 
 const MaxMessageLength = 4096
 

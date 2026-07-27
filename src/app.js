@@ -160,7 +160,25 @@ async function Run () {
     bot.OnText(/\/lscmd/, async (msg) => bot.ReplyMessage(msg, commandsInString))
 
     // force app shutdown if polling error happens
-    bot.OnPollingError((error) => process.exit(1))
+    bot.OnPollingError((err) => {
+        console.error('Polling error:', err.code);
+
+        if (err.response) {
+            console.error('Status:', err.response.statusCode);
+            console.error('Body:', err.response.body);
+        }
+
+        if (err.response?.statusCode === 429) {
+            const retryAfter = err.response.body.parameters?.retry_after;
+            console.log(`Rate limited. Please wait ${retryAfter} seconds before retrying.`);
+        }
+
+        if (err.response?.statusCode === 502) {
+            console.log('Telegram server is temporarily unavailable.');
+        }
+
+        process.exit(1)
+    })
 
     console.log(`bot is ready, avabilable commands =\n[\n${commandsInString.split('\n').map(x => `    ${x}`).join('\n')}\n]`)
 }
