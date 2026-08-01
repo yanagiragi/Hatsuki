@@ -160,7 +160,9 @@ async function ListEntry (bot, msg, id, entry, outputAsTable) {
     entries.sort((x, y) => x.decorType.localeCompare(y.decorType))
 
     if (outputAsTable) {
-        const tableData = entries.map(x => [x.decorType, (x.pikminType == CONSTANT_OTHER ? `${x.pikminType}-${x.pikminTypeMisc}` : x.pikminType), x.acquireType, x.misc])
+        const tableData = entries
+            .map(x => [x.decorType, (x.pikminType == CONSTANT_OTHER ? `${x.pikminType}-${x.pikminTypeMisc}` : x.pikminType), x.acquireType, x.misc])
+            .sort((a, b) => PikminTypes.indexOf(a[1]) - PikminTypes.indexOf(b[1]))
         const option = { parse_mode: 'Markdown' }
         const output = markdownTable([['飾品', '皮克敏', '狀態', '地點']].concat(tableData))
         return bot.ReplyMessage(msg, `Found entries: \`\`\`\n${output}\`\`\``, option)
