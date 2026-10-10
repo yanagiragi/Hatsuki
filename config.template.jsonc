@@ -24,5 +24,26 @@
     "YtDL.WebhookToken": "", // Bearer token without 'Bearer '
     "YtDLMp3.Enabled": true,
     "YtDLMp3.WebhookUrl": "https://www.example.com", // HTTP_WEB_HOOK
-    "YtDLMp3.WebhookToken": "" // Bearer token without 'Bearer '
+    "YtDLMp3.WebhookToken": "", // Bearer token without 'Bearer '
+    "TaiexPriceNotify.Enabled": false,
+    "TaiexPriceNotify.FugleToken": "",
+    "TaiexPriceNotify.Interval": 60,
+    "TaiexPriceNotify.NotifyText": "",
+    "TaiexPriceNotify.ChatIdList": [
+        {
+            "nickname": "RANDOM CHANNEL", // human readable nickname, only for comment
+            "chatId": -1 // TG_CHAT_ID_IN_NUMBER
+        }
+    ],
+    "DazhiShutterChangeNotify.Enabled": true,
+    "DazhiShutterChangeNotify.Endpoint": "http://dazhi-shutter-chance-endpoint.com/api/v1/status",
+    "DazhiShutterChangeNotify.Token": "", // Bearer token without 'Bearer '
+    "DazhiShutterChangeNotify.Interval": 300,
+    "DazhiShutterChangeNotify.NotifyText": "",
+    "DazhiShutterChangeNotify.ChatIdList": [
+        {
+            "nickname": "RANDOM CHANNEL", // human readable nickname, only for comment
+            "chatId": -1 // TG_CHAT_ID_IN_NUMBER
+        }
+    ]
 }

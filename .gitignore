@@ -74,3 +74,4 @@ src/Plugins/MeowMeowImage/Storage/*/*.png
 src/Plugins/MeowMeowImage/Storage/fileId.json
 src/Plugins/Pikmin/data.json
 src/Plugins/TaiexPriceNotify/data.json
+src/Plugins/DazhiShutterChanceNotify/data.json

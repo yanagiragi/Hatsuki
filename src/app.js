@@ -152,6 +152,7 @@ async function Run () {
         'pikminBloomList',
         'pikminBloomListEntry',
         'pikminBloomAddDecorType',
+        'dazhiShutterChanceNotify',
     ], config, ['messageRecordNewId'])
 
     const commandsInString = [...new Set(commands.map(x => x.descriptions).flat())].reduce((acc, ele) => {
