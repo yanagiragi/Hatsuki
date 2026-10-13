@@ -30,7 +30,8 @@ async function GetMetadata (url, token) {
 
 async function CheckHasChance (url, token) {
     const metadata = await GetMetadata(url, token)
-    const hasChance = parseFloat(metadata?.advice?.recommendation) != 'low-opportunity'
+    const candidate = ['good-opportunity', 'possible-opportunity']
+    const hasChance = candidate.includes(metadata?.advice?.recommendation)
     const needUpdate = hasChance && data?.metadata?.advice?.date != metadata?.advice?.date
     if (needUpdate) {
         data.metadata = metadata
